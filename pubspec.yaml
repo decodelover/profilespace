@@ -1,0 +1,53 @@
+name: tspace_portfolio
+description: "Build. Showcase. Get Hired. — Professional portfolio builder for tech & creative professionals."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+  
+  # Networking & Serialization
+  dio: ^5.8.0
+  json_annotation: ^4.9.0
+  
+  # Secure Storage & Auth
+  flutter_secure_storage: ^9.2.4
+  url_launcher: ^6.3.1
+  image_picker: ^1.1.2
+  
+  # UI & Animations
+  google_fonts: ^6.2.1
+  flutter_staggered_grid_view: ^0.7.0
+  shimmer: ^3.0.0
+  confetti: ^0.8.0
+  flutter_svg: ^2.0.17
+  cached_network_image: ^3.4.1
+  
+  # Utilities
+  get_it: ^8.0.3
+  go_router: ^15.1.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
+  json_serializable: ^6.9.4
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/icons/
+    - assets/images/
