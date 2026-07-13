@@ -35,10 +35,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final isGoogle = code.contains('google');
       final path = isGoogle ? '/auth/google/callback' : '/auth/github/callback';
 
-      final response = await dio.post(
-        path,
-        data: {'code': code},
-      );
+      final response = await dio.post(path, data: {'code': code});
 
       final data = response.data['data'] as Map<String, dynamic>;
 
@@ -57,7 +54,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     } on DioException catch (e) {
       throw ServerException(
-        message: e.response?.data?['message']?.toString() ??
+        message:
+            e.response?.data?['message']?.toString() ??
             'Authentication failed. Please try again.',
         statusCode: e.response?.statusCode,
       );
@@ -69,10 +67,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await dio.post(
         '/auth/email-login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
       final data = response.data['data'] as Map<String, dynamic>;
@@ -92,7 +87,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     } on DioException catch (e) {
       throw ServerException(
-        message: e.response?.data?['message']?.toString() ??
+        message:
+            e.response?.data?['message']?.toString() ??
             'Authentication failed. Please try again.',
         statusCode: e.response?.statusCode,
       );
@@ -104,14 +100,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await dio.post(
         '/auth/logout',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
     } on DioException catch (e) {
       throw ServerException(
-        message: e.response?.data?['message']?.toString() ??
-            'Logout failed.',
+        message: e.response?.data?['message']?.toString() ?? 'Logout failed.',
         statusCode: e.response?.statusCode,
       );
     }

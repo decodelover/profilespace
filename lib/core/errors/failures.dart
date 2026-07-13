@@ -19,10 +19,7 @@ abstract class Failure extends Equatable {
 
 /// Failure originating from API / network layer.
 class ServerFailure extends Failure {
-  const ServerFailure({
-    required super.message,
-    super.statusCode,
-  });
+  const ServerFailure({required super.message, super.statusCode});
 }
 
 /// Failure originating from local cache or secure storage.
@@ -64,13 +61,9 @@ class Result<T> {
   final Failure? _failure;
   final T? _data;
 
-  const Result.success(T data)
-      : _data = data,
-        _failure = null;
+  const Result.success(T data) : _data = data, _failure = null;
 
-  const Result.failure(Failure failure)
-      : _failure = failure,
-        _data = null;
+  const Result.failure(Failure failure) : _failure = failure, _data = null;
 
   bool get isSuccess => _failure == null;
   bool get isFailure => _failure != null;

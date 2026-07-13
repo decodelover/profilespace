@@ -52,8 +52,8 @@ class InboxBloc extends Bloc<InboxEvent, InboxState> {
   final GetMessages _getMessages;
 
   InboxBloc({required GetMessages getMessages})
-      : _getMessages = getMessages,
-        super(const InboxInitial()) {
+    : _getMessages = getMessages,
+      super(const InboxInitial()) {
     on<InboxFetchRequested>(_onFetch);
   }
 

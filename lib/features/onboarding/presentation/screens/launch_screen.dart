@@ -5,7 +5,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:math' as math;
 import 'package:confetti/confetti.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +23,16 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
-  final TextEditingController _slugController =
-      TextEditingController(text: 'yourname');
-  final TextEditingController _domainController =
-      TextEditingController(text: 'yourdomain.com');
+  final TextEditingController _slugController = TextEditingController(
+    text: 'yourname',
+  );
+  final TextEditingController _domainController = TextEditingController(
+    text: 'yourdomain.com',
+  );
 
-  final ConfettiController _confettiController =
-      ConfettiController(duration: const Duration(seconds: 3));
+  final ConfettiController _confettiController = ConfettiController(
+    duration: const Duration(seconds: 3),
+  );
 
   bool _isPro = false;
   bool _isPublishing = false;
@@ -49,7 +51,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
   String get _skills => _queryParams['skills'] ?? '';
   String get _avatarUrl => _queryParams['avatar_url'] ?? '';
   String get _accentColorHex => _queryParams['accent_color'] ?? '#6366F1';
-  String get _layoutTemplate => _queryParams['layout_template'] ?? 'minimal_dark';
+  String get _layoutTemplate =>
+      _queryParams['layout_template'] ?? 'minimal_dark';
   String get _plan => _queryParams['plan'] ?? 'free';
   String get _projectsParam => _queryParams['projects'] ?? '[]';
 
@@ -59,7 +62,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
     if (!_didInit) {
       _didInit = true;
       _isPro = _plan == 'pro';
-      final cleanedName = _fullName.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+      final cleanedName = _fullName.toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9]'),
+        '',
+      );
       if (cleanedName.isNotEmpty) {
         _slugController.text = cleanedName;
         _domainController.text = '$cleanedName.com';
@@ -146,12 +152,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
       if (response.data['success'] == true) {
         // Update slug settings
         if (!_isPro) {
-          await dio.put(
-            '/portfolios/me/settings',
-            data: {
-              'slug': slug,
-            },
-          );
+          await dio.put('/portfolios/me/settings', data: {'slug': slug});
         }
 
         if (mounted) {
@@ -269,9 +270,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Text(
           _isPublished ? 'You\'re live! 🎉' : 'Verify & launch site',
           style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-              ),
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -279,9 +280,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
               ? 'Your bento-style portfolio has been auto-built successfully.'
               : 'Review your site mock layout preview before launching.',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-              ),
+            color: AppColors.textSecondary,
+            fontSize: 13,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -396,7 +397,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   ),
                 )
               : Icon(
-                  _isPublished ? Icons.check_circle : Icons.rocket_launch_rounded,
+                  _isPublished
+                      ? Icons.check_circle
+                      : Icons.rocket_launch_rounded,
                   color: Colors.white,
                   size: 20,
                 ),
@@ -404,8 +407,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
             _isPublishing
                 ? 'Building & Launching...'
                 : _isPublished
-                    ? 'Published!'
-                    : 'Publish My Site',
+                ? 'Published!'
+                : 'Publish My Site',
             style: const TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 16,
@@ -433,12 +436,16 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
     // Set mockup colors based on theme settings choice
     final bgColor = isDark ? AppColors.canvasDark : const Color(0xFFF9FAFB);
-    final cardBgColor = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBgColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.white;
     final cardBorderColor = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.06);
     final mainTextColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtitleColor = isDark ? AppColors.textSecondary : const Color(0xFF4B5563);
+    final subtitleColor = isDark
+        ? AppColors.textSecondary
+        : const Color(0xFF4B5563);
 
     return Container(
       width: double.infinity,
@@ -473,7 +480,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 CircleAvatar(
                   radius: 22,
                   backgroundColor: _themeColor.withValues(alpha: 0.15),
-                  backgroundImage: _avatarUrl.isNotEmpty ? NetworkImage(_avatarUrl) : null,
+                  backgroundImage: _avatarUrl.isNotEmpty
+                      ? NetworkImage(_avatarUrl)
+                      : null,
                   child: _avatarUrl.isEmpty
                       ? Icon(Icons.person, color: _themeColor, size: 22)
                       : null,
@@ -496,10 +505,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                       const SizedBox(height: 3),
                       Text(
                         _title,
-                        style: TextStyle(
-                          color: subtitleColor,
-                          fontSize: 11,
-                        ),
+                        style: TextStyle(color: subtitleColor, fontSize: 11),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

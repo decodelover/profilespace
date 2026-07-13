@@ -117,7 +117,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<UserSession>> loginWithEmail(String email, String password) async {
+  Future<Result<UserSession>> loginWithEmail(
+    String email,
+    String password,
+  ) async {
     try {
       final session = await remoteDataSource.loginWithEmail(email, password);
 

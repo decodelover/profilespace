@@ -26,8 +26,7 @@ class EditorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          sl<PortfolioBloc>()..add(const PortfolioLoadRequested()),
+      create: (_) => sl<PortfolioBloc>()..add(const PortfolioLoadRequested()),
       child: const _EditorView(),
     );
   }
@@ -84,8 +83,8 @@ class _EditorViewState extends State<_EditorView>
         onBlockSelected: (type) {
           Navigator.pop(blocContext);
           blocContext.read<PortfolioBloc>().add(
-                PortfolioBlockAdded(type: type, content: _defaultContent(type)),
-              );
+            PortfolioBlockAdded(type: type, content: _defaultContent(type)),
+          );
         },
       ),
     );
@@ -94,24 +93,24 @@ class _EditorViewState extends State<_EditorView>
   Map<String, dynamic> _defaultContent(BlockType type) {
     return switch (type) {
       BlockType.profile => {
-          'name': 'Your Name',
-          'title': 'Your Title',
-          'availability': 'Open for roles'
-        },
+        'name': 'Your Name',
+        'title': 'Your Title',
+        'availability': 'Open for roles',
+      },
       BlockType.text => {'text': 'Write something here...'},
       BlockType.link => {'label': 'My Link', 'url': 'https://...'},
       BlockType.github => {
-          'repo_name': 'my-project',
-          'description': 'A cool project',
-          'stars': 0,
-          'language': 'Dart'
-        },
+        'repo_name': 'my-project',
+        'description': 'A cool project',
+        'stars': 0,
+        'language': 'Dart',
+      },
       BlockType.statsCounter => {'value': '100+', 'label': 'Projects'},
       BlockType.prompt => {
-          'system': 'You are a helpful assistant...',
-          'input': 'User prompt here',
-          'output': 'Generated response...'
-        },
+        'system': 'You are a helpful assistant...',
+        'input': 'User prompt here',
+        'output': 'Generated response...',
+      },
       _ => {},
     };
   }
@@ -171,15 +170,16 @@ class _EditorViewState extends State<_EditorView>
                   color: AppColors.accent.withValues(alpha: 0.1),
                   child: Row(
                     children: [
-                      const Icon(Icons.drag_indicator_rounded,
-                          color: AppColors.accent, size: 20),
+                      const Icon(
+                        Icons.drag_indicator_rounded,
+                        color: AppColors.accent,
+                        size: 20,
+                      ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           'Drag blocks to reorder. Tap ✕ to delete.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
+                          style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(color: AppColors.accent),
                         ),
                       ),
@@ -192,13 +192,12 @@ class _EditorViewState extends State<_EditorView>
                 ),
             ],
           ),
-          floatingActionButton:
-              state is PortfolioLoaded && !state.isWiggleMode
-                  ? FloatingActionButton(
-                      onPressed: () => _showAddBlockSheet(context),
-                      child: const Icon(Icons.add_rounded),
-                    )
-                  : null,
+          floatingActionButton: state is PortfolioLoaded && !state.isWiggleMode
+              ? FloatingActionButton(
+                  onPressed: () => _showAddBlockSheet(context),
+                  child: const Icon(Icons.add_rounded),
+                )
+              : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
         );
@@ -222,8 +221,8 @@ class _EditorViewState extends State<_EditorView>
           child: Text(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: isActive ? Colors.white : AppColors.textMuted,
-                ),
+              color: isActive ? Colors.white : AppColors.textMuted,
+            ),
           ),
         ),
       ),
@@ -242,17 +241,22 @@ class _EditorViewState extends State<_EditorView>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline_rounded,
-                color: AppColors.error, size: 48),
+            const Icon(
+              Icons.error_outline_rounded,
+              color: AppColors.error,
+              size: 48,
+            ),
             const SizedBox(height: AppSpacing.md),
-            Text(state.message,
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center),
+            Text(
+              state.message,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AppSpacing.md),
             ElevatedButton(
-              onPressed: () => context
-                  .read<PortfolioBloc>()
-                  .add(const PortfolioLoadRequested()),
+              onPressed: () => context.read<PortfolioBloc>().add(
+                const PortfolioLoadRequested(),
+              ),
               child: const Text('Retry'),
             ),
           ],
@@ -268,14 +272,21 @@ class _EditorViewState extends State<_EditorView>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.grid_view_rounded,
-                  color: AppColors.textMuted, size: 64),
+              Icon(
+                Icons.grid_view_rounded,
+                color: AppColors.textMuted,
+                size: 64,
+              ),
               const SizedBox(height: AppSpacing.md),
-              Text('Your grid is empty',
-                  style: Theme.of(context).textTheme.headlineMedium),
+              Text(
+                'Your grid is empty',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               const SizedBox(height: AppSpacing.sm),
-              Text('Tap + to add your first block.',
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                'Tap + to add your first block.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ],
           ),
         );
@@ -283,7 +294,11 @@ class _EditorViewState extends State<_EditorView>
 
       return state.isWiggleMode
           ? _buildWiggleGrid(context, blocks, state)
-          : _buildBentoGrid(context, blocks, state.portfolio.themeSettings.layoutTemplate);
+          : _buildBentoGrid(
+              context,
+              blocks,
+              state.portfolio.themeSettings.layoutTemplate,
+            );
     }
 
     return const SizedBox.shrink();
@@ -292,7 +307,9 @@ class _EditorViewState extends State<_EditorView>
   /// Opens device gallery to select an image, uploads it to R2, and
   /// attaches the URL to the bento block.
   Future<void> _handleImageBlockTap(
-      BuildContext context, PortfolioBlock block) async {
+    BuildContext context,
+    PortfolioBlock block,
+  ) async {
     if (block.type != BlockType.image) return;
 
     final picker = ImagePicker();
@@ -303,17 +320,20 @@ class _EditorViewState extends State<_EditorView>
 
     if (image != null && context.mounted) {
       context.read<PortfolioBloc>().add(
-            PortfolioBlockImageUploadRequested(
-              blockId: block.id,
-              filePath: image.path,
-            ),
-          );
+        PortfolioBlockImageUploadRequested(
+          blockId: block.id,
+          filePath: image.path,
+        ),
+      );
     }
   }
 
   /// Standard 2-column bento grid with long-press to enter wiggle mode.
   Widget _buildBentoGrid(
-      BuildContext context, List<PortfolioBlock> blocks, String layoutTemplate) {
+    BuildContext context,
+    List<PortfolioBlock> blocks,
+    String layoutTemplate,
+  ) {
     final isLight = layoutTemplate == 'minimal_light';
     final cardDec = isLight
         ? BoxDecoration(
@@ -348,7 +368,10 @@ class _EditorViewState extends State<_EditorView>
             child: Container(
               decoration: cardDec,
               clipBehavior: Clip.antiAlias,
-              child: BlockRenderer(block: block, layoutTemplate: layoutTemplate),
+              child: BlockRenderer(
+                block: block,
+                layoutTemplate: layoutTemplate,
+              ),
             ),
           );
         },
@@ -373,11 +396,8 @@ class _EditorViewState extends State<_EditorView>
         mainAxisSpacing: 12,
         onReorder: (oldIndex, newIndex) {
           context.read<PortfolioBloc>().add(
-                PortfolioBlocksReordered(
-                  oldIndex: oldIndex,
-                  newIndex: newIndex,
-                ),
-              );
+            PortfolioBlocksReordered(oldIndex: oldIndex, newIndex: newIndex),
+          );
         },
         children: blocks.map((block) {
           return _WiggleBlockWrapper(
@@ -385,9 +405,9 @@ class _EditorViewState extends State<_EditorView>
             controller: _wiggleController,
             isLight: isLight,
             onDelete: () {
-              context
-                  .read<PortfolioBloc>()
-                  .add(PortfolioBlockDeleted(block.id));
+              context.read<PortfolioBloc>().add(
+                PortfolioBlockDeleted(block.id),
+              );
             },
             child: BlockRenderer(block: block, layoutTemplate: layoutTemplate),
           );
@@ -426,9 +446,7 @@ class _WiggleBlockWrapper extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(color: borderAccent, width: 1.5),
               )
-            : GlassDecoration.card(
-                borderColor: borderAccent,
-              );
+            : GlassDecoration.card(borderColor: borderAccent);
 
         return Transform.rotate(
           angle: angle,
@@ -453,8 +471,11 @@ class _WiggleBlockWrapper extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: AppColors.error,
                     ),
-                    child: const Icon(Icons.close_rounded,
-                        size: 14, color: Colors.white),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -497,16 +518,25 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
       _BlockOption(BlockType.text, 'Text Block', Icons.text_fields_rounded),
       _BlockOption(BlockType.link, 'Link', Icons.link_rounded),
       _BlockOption(
-          BlockType.image, 'Image Gallery', Icons.photo_library_rounded),
+        BlockType.image,
+        'Image Gallery',
+        Icons.photo_library_rounded,
+      ),
       _BlockOption(
-          BlockType.statsCounter, 'Stats Counter', Icons.trending_up_rounded),
+        BlockType.statsCounter,
+        'Stats Counter',
+        Icons.trending_up_rounded,
+      ),
     ],
     'Developer': [
       _BlockOption(BlockType.github, 'GitHub Repo', Icons.code_rounded),
     ],
     'Creative': [
       _BlockOption(
-          BlockType.figma, 'Figma Embed', Icons.design_services_rounded),
+        BlockType.figma,
+        'Figma Embed',
+        Icons.design_services_rounded,
+      ),
       _BlockOption(BlockType.video, 'Video Embed', Icons.play_circle_rounded),
     ],
     'Writers': [
@@ -514,7 +544,10 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
     ],
     'AI / Prompts': [
       _BlockOption(
-          BlockType.prompt, 'Prompt Playground', Icons.smart_toy_rounded),
+        BlockType.prompt,
+        'Prompt Playground',
+        Icons.smart_toy_rounded,
+      ),
     ],
   };
 
@@ -552,8 +585,10 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: Row(
                 children: [
-                  Text('Add Block',
-                      style: Theme.of(context).textTheme.headlineMedium),
+                  Text(
+                    'Add Block',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
@@ -566,13 +601,17 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
             // Search bar
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
               child: TextField(
                 controller: _searchController,
                 decoration: const InputDecoration(
                   hintText: 'Search blocks...',
-                  prefixIcon:
-                      Icon(Icons.search_rounded, color: AppColors.textMuted),
+                  prefixIcon: Icon(
+                    Icons.search_rounded,
+                    color: AppColors.textMuted,
+                  ),
                   isDense: true,
                 ),
               ),
@@ -583,40 +622,34 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
               height: 40,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 separatorBuilder: (_, __) =>
                     const SizedBox(width: AppSpacing.sm),
                 itemCount: _categories.length,
                 itemBuilder: (_, index) {
                   final isActive = _categoryIndex == index;
                   return GestureDetector(
-                    onTap: () =>
-                        setState(() => _categoryIndex = index),
+                    onTap: () => setState(() => _categoryIndex = index),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: isActive
                             ? AppColors.accent
                             : AppColors.canvasDark,
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.full),
+                        borderRadius: BorderRadius.circular(AppRadius.full),
                         border: isActive
                             ? null
                             : Border.all(color: AppColors.borderSubtle),
                       ),
                       child: Text(
                         _categories[index],
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelLarge
-                            ?.copyWith(
-                              color: isActive
-                                  ? Colors.white
-                                  : AppColors.textMuted,
-                              fontSize: 13,
-                            ),
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: isActive ? Colors.white : AppColors.textMuted,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   );
@@ -629,16 +662,14 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
             Expanded(
               child: ListView.separated(
                 controller: scrollController,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 separatorBuilder: (_, __) =>
                     const SizedBox(height: AppSpacing.sm),
                 itemCount: options.length,
                 itemBuilder: (_, index) {
                   final option = options[index];
                   return GestureDetector(
-                    onTap: () =>
-                        widget.onBlockSelected(option.type),
+                    onTap: () => widget.onBlockSelected(option.type),
                     child: Container(
                       padding: const EdgeInsets.all(AppSpacing.md),
                       decoration: GlassDecoration.card(),
@@ -648,22 +679,26 @@ class _AddBlockSheetState extends State<_AddBlockSheet> {
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
-                              color: AppColors.accent
-                                  .withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(
-                                  AppRadius.md),
+                              color: AppColors.accent.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(AppRadius.md),
                             ),
-                            child: Icon(option.icon,
-                                color: AppColors.accent, size: 22),
+                            child: Icon(
+                              option.icon,
+                              color: AppColors.accent,
+                              size: 22,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.md),
-                          Text(option.label,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge),
+                          Text(
+                            option.label,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
                           const Spacer(),
-                          const Icon(Icons.add_circle_outline_rounded,
-                              color: AppColors.textMuted, size: 22),
+                          const Icon(
+                            Icons.add_circle_outline_rounded,
+                            color: AppColors.textMuted,
+                            size: 22,
+                          ),
                         ],
                       ),
                     ),
@@ -728,10 +763,7 @@ class ReorderableGridView extends StatelessWidget {
             (child) => Padding(
               key: child.key,
               padding: EdgeInsets.only(bottom: mainAxisSpacing),
-              child: AspectRatio(
-                aspectRatio: 1.0,
-                child: child,
-              ),
+              child: AspectRatio(aspectRatio: 1.0, child: child),
             ),
           )
           .toList(),

@@ -14,20 +14,24 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       final response = await dio.get('/analytics');
       if (response.data['success'] == true) {
         final data = response.data['data'] as Map<String, dynamic>;
-        
+
         final viewsList = (data['views_over_time'] as List)
-            .map((item) => ViewsDataPoint(
-                  date: item['date'] as String,
-                  views: item['views'] as int,
-                ))
+            .map(
+              (item) => ViewsDataPoint(
+                date: item['date'] as String,
+                views: item['views'] as int,
+              ),
+            )
             .toList();
 
         final countriesList = (data['countries'] as List)
-            .map((item) => CountryMetric(
-                  code: item['code'] as String,
-                  name: item['name'] as String,
-                  count: item['count'] as int,
-                ))
+            .map(
+              (item) => CountryMetric(
+                code: item['code'] as String,
+                name: item['name'] as String,
+                count: item['count'] as int,
+              ),
+            )
             .toList();
 
         final breakdown = data['device_breakdown'] as Map<String, dynamic>;
@@ -42,13 +46,18 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
         return Result.success(analyticsData);
       }
-      return Result.failure(ServerFailure(message: 'Failed to fetch analytics data.'));
+      return Result.failure(
+        ServerFailure(message: 'Failed to fetch analytics data.'),
+      );
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to load analytics.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to load analytics.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }

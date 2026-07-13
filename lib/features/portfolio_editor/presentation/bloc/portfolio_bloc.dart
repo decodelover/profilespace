@@ -105,10 +105,7 @@ class PortfolioLoaded extends PortfolioState {
   final Portfolio portfolio;
   final bool isWiggleMode;
 
-  const PortfolioLoaded({
-    required this.portfolio,
-    this.isWiggleMode = false,
-  });
+  const PortfolioLoaded({required this.portfolio, this.isWiggleMode = false});
 
   PortfolioLoaded copyWith({Portfolio? portfolio, bool? isWiggleMode}) {
     return PortfolioLoaded(
@@ -145,12 +142,12 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
     required AddBlock addBlock,
     required DeleteBlock deleteBlock,
     required UploadImage uploadImage,
-  })  : _getPortfolio = getPortfolio,
-        _updateBlockLayout = updateBlockLayout,
-        _addBlock = addBlock,
-        _deleteBlock = deleteBlock,
-        _uploadImage = uploadImage,
-        super(const PortfolioInitial()) {
+  }) : _getPortfolio = getPortfolio,
+       _updateBlockLayout = updateBlockLayout,
+       _addBlock = addBlock,
+       _deleteBlock = deleteBlock,
+       _uploadImage = uploadImage,
+       super(const PortfolioInitial()) {
     on<PortfolioLoadRequested>(_onLoad);
     on<PortfolioWiggleModeToggled>(_onWiggleToggle);
     on<PortfolioBlocksReordered>(_onReorder);
@@ -198,9 +195,11 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
       return entry.value.copyWith(sortOrder: entry.key);
     }).toList();
 
-    emit(current.copyWith(
-      portfolio: current.portfolio.copyWithBlocks(reorderedBlocks),
-    ));
+    emit(
+      current.copyWith(
+        portfolio: current.portfolio.copyWithBlocks(reorderedBlocks),
+      ),
+    );
 
     // Persist to the backend.
     await _updateBlockLayout(reorderedBlocks);
@@ -234,13 +233,12 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
         // Silently fail; the user can retry.
       },
       (newBlock) {
-        final updatedBlocks = [
-          ...current.portfolio.blocks,
-          newBlock,
-        ];
-        emit(current.copyWith(
-          portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
-        ));
+        final updatedBlocks = [...current.portfolio.blocks, newBlock];
+        emit(
+          current.copyWith(
+            portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
+          ),
+        );
       },
     );
   }
@@ -257,9 +255,11 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
         .where((b) => b.id != event.blockId)
         .toList();
 
-    emit(current.copyWith(
-      portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
-    ));
+    emit(
+      current.copyWith(
+        portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
+      ),
+    );
 
     // Persist deletion.
     await _deleteBlock(event.blockId);
@@ -288,9 +288,11 @@ class PortfolioBloc extends Bloc<PortfolioEvent, PortfolioState> {
           return b;
         }).toList();
 
-        emit(current.copyWith(
-          portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
-        ));
+        emit(
+          current.copyWith(
+            portfolio: current.portfolio.copyWithBlocks(updatedBlocks),
+          ),
+        );
 
         // Persist update back to database
         await _updateBlockLayout(updatedBlocks);

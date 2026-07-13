@@ -75,11 +75,7 @@ class _SplashScreenState extends State<SplashScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF0B0F19),
-                Color(0xFF1a1040),
-                Color(0xFF0B0F19),
-              ],
+              colors: [Color(0xFF0B0F19), Color(0xFF1a1040), Color(0xFF0B0F19)],
             ),
           ),
           child: Column(
@@ -97,8 +93,9 @@ class _SplashScreenState extends State<SplashScreen>
                       color: AppColors.accent.withValues(alpha: 0.15),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.accent
-                              .withValues(alpha: _pulseAnimation.value * 0.3),
+                          color: AppColors.accent.withValues(
+                            alpha: _pulseAnimation.value * 0.3,
+                          ),
                           blurRadius: 40,
                           spreadRadius: 10,
                         ),
@@ -116,17 +113,17 @@ class _SplashScreenState extends State<SplashScreen>
               Text(
                 'TSPACE',
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      letterSpacing: 6,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  letterSpacing: 6,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Build. Showcase. Get Hired.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textMuted,
-                      letterSpacing: 1.5,
-                    ),
+                  color: AppColors.textMuted,
+                  letterSpacing: 1.5,
+                ),
               ),
             ],
           ),

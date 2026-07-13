@@ -12,15 +12,14 @@ void main() {
     await initServiceLocator();
   });
 
-  testWidgets('TspaceApp renders without crashing', (WidgetTester tester) async {
+  testWidgets('TspaceApp renders without crashing', (
+    WidgetTester tester,
+  ) async {
     // Build the app and trigger a frame.
     await tester.pumpWidget(const TspaceApp());
 
-    // Advance the virtual clock past the 800ms delay in SplashScreen
-    await tester.pump(const Duration(seconds: 1));
-
-    // Verify the app bootstraps — the splash screen should render the brand name.
-    expect(find.text('TSPACE'), findsOneWidget);
-    expect(find.text('Build. Showcase. Get Hired.'), findsOneWidget);
+    // Verify the app bootstraps — the welcome screen should render.
+    expect(find.text('Build Stunning\nPortfolios'), findsOneWidget);
+    expect(find.text('Skip'), findsOneWidget);
   });
 }

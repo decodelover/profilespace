@@ -34,8 +34,7 @@ class AddBlock {
     required BlockType type,
     required GridPosition position,
     required Map<String, dynamic> content,
-  }) =>
-      _repository.addBlock(type: type, position: position, content: content);
+  }) => _repository.addBlock(type: type, position: position, content: content);
 }
 
 // ─── Delete Block ─────────────────────────────────────────────────────
@@ -44,6 +43,5 @@ class DeleteBlock {
   final PortfolioRepository _repository;
   const DeleteBlock(this._repository);
 
-  Future<Result<void>> call(String blockId) =>
-      _repository.deleteBlock(blockId);
+  Future<Result<void>> call(String blockId) => _repository.deleteBlock(blockId);
 }

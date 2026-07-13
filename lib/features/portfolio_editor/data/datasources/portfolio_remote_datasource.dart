@@ -33,7 +33,8 @@ class PortfolioRemoteDataSourceImpl implements PortfolioRemoteDataSource {
 
   @override
   Future<Portfolio> updateBlockLayout(
-      List<Map<String, dynamic>> blockData) async {
+    List<Map<String, dynamic>> blockData,
+  ) async {
     final response = await dio.put(
       '/portfolios/me/blocks/layout',
       data: {'blocks': blockData},
@@ -43,10 +44,7 @@ class PortfolioRemoteDataSourceImpl implements PortfolioRemoteDataSource {
 
   @override
   Future<PortfolioBlock> addBlock(Map<String, dynamic> blockData) async {
-    final response = await dio.post(
-      '/portfolios/me/blocks',
-      data: blockData,
-    );
+    final response = await dio.post('/portfolios/me/blocks', data: blockData);
     return _parseBlock(response.data['data']);
   }
 
@@ -60,10 +58,7 @@ class PortfolioRemoteDataSourceImpl implements PortfolioRemoteDataSource {
     final file = await MultipartFile.fromFile(filePath);
     final formData = FormData.fromMap({'image': file});
 
-    final response = await dio.post(
-      '/upload/image',
-      data: formData,
-    );
+    final response = await dio.post('/upload/image', data: formData);
 
     return response.data['data']['url'] as String;
   }
@@ -75,14 +70,14 @@ class PortfolioRemoteDataSourceImpl implements PortfolioRemoteDataSource {
       themeSettings: ThemeSettings(
         accentColor:
             (data['theme_settings'] as Map?)?['accent_color'] ?? '#6366F1',
-        fontFamily:
-            (data['theme_settings'] as Map?)?['font_family'] ?? 'Inter',
+        fontFamily: (data['theme_settings'] as Map?)?['font_family'] ?? 'Inter',
         layoutTemplate:
             (data['theme_settings'] as Map?)?['layout_template'] ??
-                'minimal_dark',
+            'minimal_dark',
       ),
       isPublished: data['is_published'] as bool? ?? false,
-      blocks: (data['blocks'] as List<dynamic>?)
+      blocks:
+          (data['blocks'] as List<dynamic>?)
               ?.map((b) => _parseBlock(b as Map<String, dynamic>))
               .toList() ??
           [],
@@ -125,11 +120,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       final portfolio = await remoteDataSource.getPortfolio();
       return Result.success(portfolio);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to load portfolio.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to load portfolio.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }
@@ -137,28 +135,34 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
 
   @override
   Future<Result<Portfolio>> updateBlockLayout(
-      List<PortfolioBlock> blocks) async {
+    List<PortfolioBlock> blocks,
+  ) async {
     try {
       final blockData = blocks
-          .map((b) => {
-                'id': b.id,
-                'sort_order': b.sortOrder,
-                'grid_position': {
-                  'x': b.gridPosition.x,
-                  'y': b.gridPosition.y,
-                  'w': b.gridPosition.w,
-                  'h': b.gridPosition.h,
-                },
-              })
+          .map(
+            (b) => {
+              'id': b.id,
+              'sort_order': b.sortOrder,
+              'grid_position': {
+                'x': b.gridPosition.x,
+                'y': b.gridPosition.y,
+                'w': b.gridPosition.w,
+                'h': b.gridPosition.h,
+              },
+            },
+          )
           .toList();
       final portfolio = await remoteDataSource.updateBlockLayout(blockData);
       return Result.success(portfolio);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to update layout.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to update layout.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }
@@ -183,11 +187,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       });
       return Result.success(block);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message:
-            e.response?.data?['message']?.toString() ?? 'Failed to add block.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to add block.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }
@@ -199,11 +206,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       await remoteDataSource.deleteBlock(blockId);
       return const Result.success(null);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to delete block.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to delete block.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }
@@ -215,11 +225,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       final url = await remoteDataSource.uploadImage(filePath);
       return Result.success(url);
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to upload image.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to upload image.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }

@@ -21,12 +21,12 @@ class Message extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        senderName,
-        senderEmail,
-        company,
-        message,
-        tag,
-        createdAt,
-      ];
+    id,
+    senderName,
+    senderEmail,
+    company,
+    message,
+    tag,
+    createdAt,
+  ];
 }

@@ -118,7 +118,8 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       desc: 'Mobile portfolio builder using Flutter and Laravel.',
       url: 'https://tspace.me',
       skills: 'Flutter, Dart, Laravel',
-      image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600',
+      image:
+          'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600',
     );
   }
 
@@ -152,15 +153,17 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       return;
     }
     setState(() {
-      _projects.add(ProjectInput(
-        title: title,
-        desc: desc,
-        url: url,
-        skills: skills,
-        image: image.isNotEmpty
-            ? image
-            : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=600',
-      ));
+      _projects.add(
+        ProjectInput(
+          title: title,
+          desc: desc,
+          url: url,
+          skills: skills,
+          image: image.isNotEmpty
+              ? image
+              : 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=600',
+        ),
+      );
     });
   }
 
@@ -198,7 +201,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: AppColors.textMuted),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -315,9 +321,12 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back_rounded,
-                              color: AppColors.textPrimary),
-                          onPressed: () => context.go(RoutePaths.onboardingRole),
+                          icon: const Icon(
+                            Icons.arrow_back_rounded,
+                            color: AppColors.textPrimary,
+                          ),
+                          onPressed: () =>
+                              context.go(RoutePaths.onboardingRole),
                         ),
                         const Spacer(),
                         _buildPlanToggler(),
@@ -339,9 +348,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                             children: [
                               Text(
                                 'Complete your portfolio',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium
+                                style: Theme.of(context).textTheme.displayMedium
                                     ?.copyWith(
                                       fontSize: 28,
                                       fontWeight: FontWeight.w800,
@@ -350,9 +357,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                               const SizedBox(height: 4),
                               Text(
                                 'Input your professional details and projects to auto-build your portfolio grid.',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
+                                style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: AppColors.textSecondary,
                                       fontSize: 14,
@@ -379,7 +384,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: _themeColor.withValues(alpha: 0.35),
+                                        color: _themeColor.withValues(
+                                          alpha: 0.35,
+                                        ),
                                         blurRadius: 20,
                                         offset: const Offset(0, 6),
                                       ),
@@ -392,8 +399,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                                       foregroundColor: Colors.white,
                                       shadowColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
                                     ),
                                     child: const Text(
@@ -432,10 +438,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       padding: const EdgeInsets.all(4),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          _planTab('Free', 'free'),
-          _planTab('Pro ⭐', 'pro'),
-        ],
+        children: [_planTab('Free', 'free'), _planTab('Pro ⭐', 'pro')],
       ),
     );
   }
@@ -500,8 +503,12 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 TextFormField(
                   controller: _nameController,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: _inputDecoration('Full Name', Icons.person_outline),
-                  validator: (v) => v!.trim().isEmpty ? 'Enter your name' : null,
+                  decoration: _inputDecoration(
+                    'Full Name',
+                    Icons.person_outline,
+                  ),
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Enter your name' : null,
                 ),
                 const SizedBox(height: 12),
 
@@ -509,8 +516,12 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 TextFormField(
                   controller: _titleController,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: _inputDecoration('Professional Title', Icons.work_outline),
-                  validator: (v) => v!.trim().isEmpty ? 'Enter your title' : null,
+                  decoration: _inputDecoration(
+                    'Professional Title',
+                    Icons.work_outline,
+                  ),
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Enter your title' : null,
                 ),
                 const SizedBox(height: 12),
 
@@ -520,10 +531,16 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   maxLines: 2,
                   maxLength: 250,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: _inputDecoration('Short Bio', Icons.chat_bubble_outline).copyWith(
-                    alignLabelWithHint: true,
-                    counterStyle: const TextStyle(color: AppColors.textMuted),
-                  ),
+                  decoration:
+                      _inputDecoration(
+                        'Short Bio',
+                        Icons.chat_bubble_outline,
+                      ).copyWith(
+                        alignLabelWithHint: true,
+                        counterStyle: const TextStyle(
+                          color: AppColors.textMuted,
+                        ),
+                      ),
                   validator: (v) => v!.trim().isEmpty ? 'Write a bio' : null,
                 ),
                 const SizedBox(height: 8),
@@ -532,11 +549,19 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 TextFormField(
                   controller: _skillsController,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: _inputDecoration('Skills (comma separated)', Icons.star_outline_rounded).copyWith(
-                    hintText: 'e.g. Flutter, Laravel, Design',
-                    hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
-                  ),
-                  validator: (v) => v!.trim().isEmpty ? 'List your skills' : null,
+                  decoration:
+                      _inputDecoration(
+                        'Skills (comma separated)',
+                        Icons.star_outline_rounded,
+                      ).copyWith(
+                        hintText: 'e.g. Flutter, Laravel, Design',
+                        hintStyle: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 13,
+                        ),
+                      ),
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'List your skills' : null,
                 ),
                 const SizedBox(height: 12),
 
@@ -544,8 +569,12 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 TextFormField(
                   controller: _photoUrlController,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: _inputDecoration('About Photo URL', Icons.image_outlined),
-                  validator: (v) => v!.trim().isEmpty ? 'Enter avatar URL' : null,
+                  decoration: _inputDecoration(
+                    'About Photo URL',
+                    Icons.image_outlined,
+                  ),
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Enter avatar URL' : null,
                 ),
                 const SizedBox(height: 24),
 
@@ -555,9 +584,16 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 // Dark/Light Theme Choice
                 Row(
                   children: [
-                    Expanded(child: _buildThemeOption('Dark Theme 🌙', 'minimal_dark')),
+                    Expanded(
+                      child: _buildThemeOption('Dark Theme 🌙', 'minimal_dark'),
+                    ),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildThemeOption('Light Theme ☀️', 'minimal_light')),
+                    Expanded(
+                      child: _buildThemeOption(
+                        'Light Theme ☀️',
+                        'minimal_light',
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -568,7 +604,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   children: _colorOptions.map((c) {
                     final hex = c['hex']!;
                     final isSelected = _selectedColor == hex;
-                    final color = Color(int.parse(hex.replaceFirst('#', '0xFF')));
+                    final color = Color(
+                      int.parse(hex.replaceFirst('#', '0xFF')),
+                    );
 
                     return GestureDetector(
                       onTap: () => setState(() => _selectedColor = hex),
@@ -580,14 +618,27 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                           shape: BoxShape.circle,
                           color: color,
                           border: Border.all(
-                            color: isSelected ? Colors.white : Colors.transparent,
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.transparent,
                             width: 2.5,
                           ),
                           boxShadow: isSelected
-                              ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 10)]
+                              ? [
+                                  BoxShadow(
+                                    color: color.withValues(alpha: 0.5),
+                                    blurRadius: 10,
+                                  ),
+                                ]
                               : null,
                         ),
-                        child: isSelected ? const Icon(Icons.check, size: 18, color: Colors.white) : null,
+                        child: isSelected
+                            ? const Icon(
+                                Icons.check,
+                                size: 18,
+                                color: Colors.white,
+                              )
+                            : null,
                       ),
                     );
                   }).toList(),
@@ -663,7 +714,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
               : Colors.white.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? _themeColor : Colors.white.withValues(alpha: 0.05),
+            color: isSelected
+                ? _themeColor
+                : Colors.white.withValues(alpha: 0.05),
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -705,8 +758,11 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
               if (index > 0)
                 GestureDetector(
                   onTap: () => _removeProject(index),
-                  child: const Icon(Icons.delete_outline_rounded,
-                      color: AppColors.error, size: 18),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.error,
+                    size: 18,
+                  ),
                 ),
             ],
           ),
@@ -716,7 +772,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
           TextFormField(
             controller: project.titleController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: _inputDecoration('Project Title', Icons.folder_outlined),
+            decoration: _inputDecoration(
+              'Project Title',
+              Icons.folder_outlined,
+            ),
             validator: (v) => v!.trim().isEmpty ? 'Enter project title' : null,
           ),
           const SizedBox(height: 8),
@@ -726,7 +785,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             controller: project.descController,
             maxLines: 2,
             style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: _inputDecoration('Description', Icons.description_outlined),
+            decoration: _inputDecoration(
+              'Description',
+              Icons.description_outlined,
+            ),
           ),
           const SizedBox(height: 8),
 
@@ -734,7 +796,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
           TextFormField(
             controller: project.urlController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: _inputDecoration('Project URL / Link', Icons.link_rounded),
+            decoration: _inputDecoration(
+              'Project URL / Link',
+              Icons.link_rounded,
+            ),
           ),
           const SizedBox(height: 8),
 
@@ -742,7 +807,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
           TextFormField(
             controller: project.skillsController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: _inputDecoration('Skills Used (e.g. Flutter, Vue)', Icons.star_border_rounded),
+            decoration: _inputDecoration(
+              'Skills Used (e.g. Flutter, Vue)',
+              Icons.star_border_rounded,
+            ),
           ),
           const SizedBox(height: 8),
 
@@ -750,7 +818,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
           TextFormField(
             controller: project.imageController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: _inputDecoration('Project Showcase Image URL', Icons.photo_outlined),
+            decoration: _inputDecoration(
+              'Project Showcase Image URL',
+              Icons.photo_outlined,
+            ),
           ),
         ],
       ),
@@ -836,7 +907,13 @@ class _AuroraPainter extends CustomPainter {
     );
   }
 
-  void _drawOrb(Canvas canvas, Offset center, double radius, Color color, double alpha) {
+  void _drawOrb(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color color,
+    double alpha,
+  ) {
     final paint = Paint()
       ..shader = RadialGradient(
         colors: [

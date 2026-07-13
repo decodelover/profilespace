@@ -22,7 +22,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<AnalyticsBloc>()..add(const AnalyticsFetchRequested()),
+      create: (context) =>
+          sl<AnalyticsBloc>()..add(const AnalyticsFetchRequested()),
       child: Scaffold(
         appBar: AppBar(title: const Text('Analytics')),
         body: BlocBuilder<AnalyticsBloc, AnalyticsState>(
@@ -39,21 +40,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppColors.error, size: 48),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        color: AppColors.error,
+                        size: 48,
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
                         state.message,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textMuted,
-                            ),
+                          color: AppColors.textMuted,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       ElevatedButton.icon(
-                        onPressed: () => context
-                            .read<AnalyticsBloc>()
-                            .add(const AnalyticsFetchRequested()),
+                        onPressed: () => context.read<AnalyticsBloc>().add(
+                          const AnalyticsFetchRequested(),
+                        ),
                         icon: const Icon(Icons.refresh_rounded),
                         label: const Text('Retry'),
                       ),
@@ -77,12 +81,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Total Profile Views',
-                              style: Theme.of(context).textTheme.bodyMedium),
+                          Text(
+                            'Total Profile Views',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
                             '${data.totalViews}',
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            style: Theme.of(context).textTheme.displayLarge
+                                ?.copyWith(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -90,14 +97,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           const SizedBox(height: AppSpacing.sm),
                           Row(
                             children: [
-                              const Icon(Icons.trending_up_rounded,
-                                  color: AppColors.success, size: 16),
+                              const Icon(
+                                Icons.trending_up_rounded,
+                                color: AppColors.success,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'Live visitor analytics active',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
+                                style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(color: AppColors.success),
                               ),
                             ],
@@ -148,54 +156,52 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     const SizedBox(height: AppSpacing.lg),
 
                     // ─── Visitor Countries ──────────────────────────────────
-                    Text('Visitor Locations',
-                        style: Theme.of(context).textTheme.headlineMedium),
+                    Text(
+                      'Visitor Locations',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
                     const SizedBox(height: AppSpacing.md),
 
                     if (data.countries.isEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.xl),
+                          vertical: AppSpacing.xl,
+                        ),
                         child: Center(
                           child: Text(
                             'No location data recorded yet.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: AppColors.textMuted),
                           ),
                         ),
                       )
                     else
-                      ...data.countries.map(
-                        (entry) {
-                          final flag = entry.code == 'US'
-                              ? '🇺🇸'
-                              : entry.code == 'GB'
-                                  ? '🇬🇧'
-                                  : entry.code == 'DE'
-                                      ? '🇩🇪'
-                                      : entry.code == 'IN'
-                                          ? '🇮🇳'
-                                          : '🌐';
-                          final maxCount = data.countries
-                              .map((c) => c.count)
-                              .reduce((a, b) => a > b ? a : b);
-                          final percentage = maxCount > 0
-                              ? entry.count / maxCount
-                              : 0.0;
-                          return Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: AppSpacing.sm),
-                            child: _CountryRow(
-                              flag: flag,
-                              country: entry.name,
-                              percentage: percentage,
-                              rawCount: entry.count,
-                            ),
-                          );
-                        },
-                      ),
+                      ...data.countries.map((entry) {
+                        final flag = entry.code == 'US'
+                            ? '🇺🇸'
+                            : entry.code == 'GB'
+                            ? '🇬🇧'
+                            : entry.code == 'DE'
+                            ? '🇩🇪'
+                            : entry.code == 'IN'
+                            ? '🇮🇳'
+                            : '🌐';
+                        final maxCount = data.countries
+                            .map((c) => c.count)
+                            .reduce((a, b) => a > b ? a : b);
+                        final percentage = maxCount > 0
+                            ? entry.count / maxCount
+                            : 0.0;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                          child: _CountryRow(
+                            flag: flag,
+                            country: entry.name,
+                            percentage: percentage,
+                            rawCount: entry.count,
+                          ),
+                        );
+                      }),
                   ],
                 ),
               );
@@ -243,11 +249,12 @@ class _MetricCard extends StatelessWidget {
             child: Icon(icon, color: color, size: 18),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(value,
-              style: Theme.of(context)
-                  .textTheme
-                  .displayMedium
-                  ?.copyWith(fontSize: 24)),
+          Text(
+            value,
+            style: Theme.of(
+              context,
+            ).textTheme.displayMedium?.copyWith(fontSize: 24),
+          ),
           const SizedBox(height: 4),
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ],
@@ -299,10 +306,9 @@ class _CountryRow extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Text(
             '$rawCount views',
-            style: Theme.of(context)
-                .textTheme
-                .labelLarge
-                ?.copyWith(color: AppColors.accent),
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(color: AppColors.accent),
           ),
         ],
       ),

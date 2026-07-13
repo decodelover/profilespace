@@ -31,9 +31,7 @@ class _RoleSelectorScreenState extends State<RoleSelectorScreen> {
   void _onContinue() {
     if (_selectedRole == null) return;
     // Navigate to details form screen first
-    context.go(
-      '${RoutePaths.onboardingDetails}?role=${_selectedRole!.name}',
-    );
+    context.go('${RoutePaths.onboardingDetails}?role=${_selectedRole!.name}');
   }
 
   @override
@@ -88,8 +86,9 @@ class _RoleSelectorScreenState extends State<RoleSelectorScreen> {
                                 color: isSelected
                                     ? AppColors.accent.withValues(alpha: 0.15)
                                     : AppColors.canvasDark,
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.md),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.md,
+                                ),
                               ),
                               alignment: Alignment.center,
                               child: Text(
@@ -118,8 +117,9 @@ class _RoleSelectorScreenState extends State<RoleSelectorScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     role.subtitle,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -167,8 +167,9 @@ class _RoleSelectorScreenState extends State<RoleSelectorScreen> {
                   onPressed: _selectedRole != null ? _onContinue : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.accent,
-                    disabledBackgroundColor:
-                        AppColors.accent.withValues(alpha: 0.3),
+                    disabledBackgroundColor: AppColors.accent.withValues(
+                      alpha: 0.3,
+                    ),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),

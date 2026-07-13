@@ -228,17 +228,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               color: Colors.white.withValues(alpha: 0.08),
                             ),
                           ),
-                          backgroundColor:
-                              Colors.white.withValues(alpha: 0.04),
+                          backgroundColor: Colors.white.withValues(alpha: 0.04),
                         ),
                         child: Text(
                           'Skip',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.textMuted,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
-                                  ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppColors.textMuted,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
                         ),
                       ),
                     ),
@@ -318,12 +317,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 page.title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w800,
-                      height: 1.15,
-                      letterSpacing: -0.8,
-                      color: AppColors.textPrimary,
-                    ),
+                  fontSize: 34,
+                  fontWeight: FontWeight.w800,
+                  height: 1.15,
+                  letterSpacing: -0.8,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ),
@@ -341,11 +340,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 page.subtitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                      height: 1.7,
-                      fontSize: 15,
-                      letterSpacing: 0.1,
-                    ),
+                  color: AppColors.textSecondary,
+                  height: 1.7,
+                  fontSize: 15,
+                  letterSpacing: 0.1,
+                ),
               ),
             ),
           ),
@@ -359,42 +358,39 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   Widget _buildIndicators() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        _pages.length,
-        (i) {
-          final isActive = _currentPage == i;
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeOutCubic,
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            width: isActive ? 32 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppRadius.full),
-              gradient: isActive
-                  ? LinearGradient(
-                      colors: [
-                        _pages[_currentPage].gradientStart,
-                        _pages[_currentPage].gradientEnd,
-                      ],
-                    )
-                  : null,
-              color: isActive ? null : Colors.white.withValues(alpha: 0.15),
-              boxShadow: isActive
-                  ? [
-                      BoxShadow(
-                        color: _pages[_currentPage]
-                            .gradientStart
-                            .withValues(alpha: 0.5),
-                        blurRadius: 12,
-                        spreadRadius: 1,
+      children: List.generate(_pages.length, (i) {
+        final isActive = _currentPage == i;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          width: isActive ? 32 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            gradient: isActive
+                ? LinearGradient(
+                    colors: [
+                      _pages[_currentPage].gradientStart,
+                      _pages[_currentPage].gradientEnd,
+                    ],
+                  )
+                : null,
+            color: isActive ? null : Colors.white.withValues(alpha: 0.15),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: _pages[_currentPage].gradientStart.withValues(
+                        alpha: 0.5,
                       ),
-                    ]
-                  : null,
-            ),
-          );
-        },
-      ),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : null,
+          ),
+        );
+      }),
     );
   }
 
@@ -426,11 +422,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: const LinearGradient(
-              colors: [
-                Color(0xFF6366F1),
-                Color(0xFF8B5CF6),
-                Color(0xFFD946EF),
-              ],
+              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6), Color(0xFFD946EF)],
             ),
             boxShadow: [
               BoxShadow(
@@ -458,10 +450,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     child: ShaderMask(
                       shaderCallback: (rect) {
                         return LinearGradient(
-                          begin: Alignment(-1.0 + 3.0 * _shimmerController.value,
-                              0),
+                          begin: Alignment(
+                            -1.0 + 3.0 * _shimmerController.value,
+                            0,
+                          ),
                           end: Alignment(
-                              -0.5 + 3.0 * _shimmerController.value, 0),
+                            -0.5 + 3.0 * _shimmerController.value,
+                            0,
+                          ),
                           colors: [
                             Colors.transparent,
                             Colors.white.withValues(alpha: 0.15),
@@ -485,9 +481,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       children: [
                         Text(
                           'Get Started',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
+                          style: Theme.of(context).textTheme.labelLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
@@ -521,9 +515,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white.withValues(alpha: 0.05),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -542,11 +534,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Text(
                   'Next',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: AppColors.textPrimary,
-                        letterSpacing: 0.3,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.textPrimary,
+                    letterSpacing: 0.3,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
@@ -652,10 +644,7 @@ class _HeroIconState extends State<_HeroIcon>
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        widget.gradientStart,
-                        widget.gradientEnd,
-                      ],
+                      colors: [widget.gradientStart, widget.gradientEnd],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -667,11 +656,7 @@ class _HeroIconState extends State<_HeroIcon>
                   ),
                 ),
                 // Icon
-                Icon(
-                  widget.icon,
-                  size: 40,
-                  color: Colors.white,
-                ),
+                Icon(widget.icon, size: 40, color: Colors.white),
               ],
             ),
           ),
@@ -794,7 +779,12 @@ class _AuroraPainter extends CustomPainter {
   }
 
   void _drawOrb(
-      Canvas canvas, Offset center, double radius, Color color, double alpha) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color color,
+    double alpha,
+  ) {
     final paint = Paint()
       ..shader = RadialGradient(
         colors: [
@@ -825,10 +815,10 @@ class _ParticlePainter extends CustomPainter {
     for (final p in particles) {
       final tau = math.pi * 2;
       // Gentle circular drift
-      final x = (p.x + 0.03 * math.sin(t * tau * p.speed + p.phase)) *
-          size.width;
-      final y = (p.y + 0.04 * math.cos(t * tau * p.speed + p.phase)) *
-          size.height;
+      final x =
+          (p.x + 0.03 * math.sin(t * tau * p.speed + p.phase)) * size.width;
+      final y =
+          (p.y + 0.04 * math.cos(t * tau * p.speed + p.phase)) * size.height;
 
       // Pulsing opacity
       final pulsedOpacity =

@@ -84,7 +84,9 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
     if (_role == ProfessionalRole.developer && _selectedRepos.isNotEmpty) {
       setState(() => _isLoading = true);
       try {
-        final selectedList = _selectedRepos.map((index) => _repos[index]).toList();
+        final selectedList = _selectedRepos
+            .map((index) => _repos[index])
+            .toList();
         final dio = sl<Dio>();
         final response = await dio.post(
           '/github/import',
@@ -143,7 +145,7 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
 
               // Dynamic content
               Expanded(
-                child: _isLoading 
+                child: _isLoading
                     ? const Center(
                         child: CircularProgressIndicator(
                           color: AppColors.accent,
@@ -240,8 +242,9 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(AppSpacing.md),
-            decoration:
-                isSelected ? GlassDecoration.cardSelected() : GlassDecoration.card(),
+            decoration: isSelected
+                ? GlassDecoration.cardSelected()
+                : GlassDecoration.card(),
             child: Row(
               children: [
                 // Checkbox
@@ -252,7 +255,9 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: isSelected ? AppColors.accent : AppColors.textMuted,
+                      color: isSelected
+                          ? AppColors.accent
+                          : AppColors.textMuted,
                       width: 1.5,
                     ),
                     color: isSelected ? AppColors.accent : Colors.transparent,
@@ -297,9 +302,7 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
                             ),
                             child: Text(
                               (repo['language'] ?? 'Code') as String,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     fontSize: 11,
                                     color: AppColors.accent,
@@ -335,8 +338,10 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
           controller: _urlController,
           decoration: InputDecoration(
             hintText: placeholder,
-            prefixIcon:
-                const Icon(Icons.link_rounded, color: AppColors.textMuted),
+            prefixIcon: const Icon(
+              Icons.link_rounded,
+              color: AppColors.textMuted,
+            ),
           ),
           style: Theme.of(context).textTheme.bodyLarge,
           keyboardType: TextInputType.url,
@@ -347,8 +352,11 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
           decoration: GlassDecoration.card(),
           child: Row(
             children: [
-              Icon(Icons.info_outline_rounded,
-                  color: AppColors.accent, size: 20),
+              Icon(
+                Icons.info_outline_rounded,
+                color: AppColors.accent,
+                size: 20,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(

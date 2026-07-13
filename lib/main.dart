@@ -17,9 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Lock orientation to portrait for optimal bento-grid editing.
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // Set system UI overlay style for dark immersive chrome.
   SystemChrome.setSystemUIOverlayStyle(

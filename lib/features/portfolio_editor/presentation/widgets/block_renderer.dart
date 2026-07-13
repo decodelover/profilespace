@@ -25,17 +25,32 @@ class BlockRenderer extends StatelessWidget {
     final isLight = layoutTemplate == 'minimal_light';
 
     return switch (block.type) {
-      BlockType.profile => _ProfileBlock(content: block.content, isLight: isLight),
+      BlockType.profile => _ProfileBlock(
+        content: block.content,
+        isLight: isLight,
+      ),
       BlockType.text => _TextBlock(content: block.content, isLight: isLight),
       BlockType.link => _LinkBlock(content: block.content, isLight: isLight),
-      BlockType.github => _GithubBlock(content: block.content, isLight: isLight),
+      BlockType.github => _GithubBlock(
+        content: block.content,
+        isLight: isLight,
+      ),
       BlockType.figma => _FigmaBlock(content: block.content, isLight: isLight),
       BlockType.video => _VideoBlock(content: block.content, isLight: isLight),
       BlockType.rss => _RssBlock(content: block.content, isLight: isLight),
-      BlockType.statsCounter => _StatsBlock(content: block.content, isLight: isLight),
-      BlockType.prompt => _PromptBlock(content: block.content, isLight: isLight),
+      BlockType.statsCounter => _StatsBlock(
+        content: block.content,
+        isLight: isLight,
+      ),
+      BlockType.prompt => _PromptBlock(
+        content: block.content,
+        isLight: isLight,
+      ),
       BlockType.image => _ImageBlock(content: block.content, isLight: isLight),
-      BlockType.project => _ProjectBlock(content: block.content, isLight: isLight),
+      BlockType.project => _ProjectBlock(
+        content: block.content,
+        isLight: isLight,
+      ),
     };
   }
 }
@@ -53,7 +68,9 @@ class _ProfileBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isLight ? const Color(0xFF111827) : Colors.white;
-    final subtitleColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final subtitleColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
     final avatarUrl = content['avatar_url'] as String? ?? '';
 
     return Padding(
@@ -66,13 +83,19 @@ class _ProfileBlock extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: AppColors.accent.withValues(alpha: isLight ? 0.12 : 0.2),
-                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+                backgroundColor: AppColors.accent.withValues(
+                  alpha: isLight ? 0.12 : 0.2,
+                ),
+                backgroundImage: avatarUrl.isNotEmpty
+                    ? NetworkImage(avatarUrl)
+                    : null,
                 child: avatarUrl.isEmpty
                     ? Text(
                         (content['name'] as String? ?? 'U')[0].toUpperCase(),
                         style: const TextStyle(
-                            color: AppColors.accent, fontWeight: FontWeight.bold),
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
                       )
                     : null,
               ),
@@ -83,12 +106,16 @@ class _ProfileBlock extends StatelessWidget {
                   children: [
                     Text(
                       content['name'] as String? ?? 'Your Name',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: textColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       content['title'] as String? ?? 'Professional Title',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -100,7 +127,9 @@ class _ProfileBlock extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               content['bio'] as String,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -128,9 +157,9 @@ class _ProfileBlock extends StatelessWidget {
                 Text(
                   content['availability'] as String? ?? 'Open for roles',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.success,
-                        fontSize: 12,
-                      ),
+                    color: AppColors.success,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -154,7 +183,9 @@ class _TextBlock extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Text(
         content['text'] as String? ?? 'Add your text here...',
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: textColor),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(color: textColor),
       ),
     );
   }
@@ -169,7 +200,9 @@ class _LinkBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isLight ? const Color(0xFF111827) : Colors.white;
-    final subtitleColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final subtitleColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -182,8 +215,11 @@ class _LinkBlock extends StatelessWidget {
               color: AppColors.accent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
-            child: const Icon(Icons.link_rounded,
-                color: AppColors.accent, size: 20),
+            child: const Icon(
+              Icons.link_rounded,
+              color: AppColors.accent,
+              size: 20,
+            ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
@@ -193,19 +229,26 @@ class _LinkBlock extends StatelessWidget {
               children: [
                 Text(
                   content['label'] as String? ?? 'Link',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: textColor),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   content['url'] as String? ?? 'https://...',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          const Icon(Icons.arrow_outward_rounded,
-              color: AppColors.textMuted, size: 18),
+          const Icon(
+            Icons.arrow_outward_rounded,
+            color: AppColors.textMuted,
+            size: 18,
+          ),
         ],
       ),
     );
@@ -221,7 +264,9 @@ class _GithubBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isLight ? const Color(0xFF111827) : Colors.white;
-    final subtitleColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final subtitleColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -236,7 +281,9 @@ class _GithubBlock extends StatelessWidget {
               Expanded(
                 child: Text(
                   content['repo_name'] as String? ?? 'repository',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: textColor),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -245,7 +292,9 @@ class _GithubBlock extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             content['description'] as String? ?? 'No description',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -254,8 +303,12 @@ class _GithubBlock extends StatelessWidget {
             children: [
               Icon(Icons.star_rounded, size: 14, color: AppColors.warning),
               const SizedBox(width: 4),
-              Text('${content['stars'] ?? 0}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor)),
+              Text(
+                '${content['stars'] ?? 0}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: textColor),
+              ),
               const SizedBox(width: AppSpacing.md),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -265,10 +318,11 @@ class _GithubBlock extends StatelessWidget {
                 ),
                 child: Text(
                   content['language'] as String? ?? 'Code',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontSize: 11, color: AppColors.accent, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 11,
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -297,16 +351,27 @@ class _FigmaBlock extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.design_services_rounded,
-                  color: Color(0xFFA259FF), size: 18),
+              Icon(
+                Icons.design_services_rounded,
+                color: Color(0xFFA259FF),
+                size: 18,
+              ),
               SizedBox(width: 6),
-              Text('Figma', style: TextStyle(color: Color(0xFFA259FF), fontWeight: FontWeight.bold)),
+              Text(
+                'Figma',
+                style: TextStyle(
+                  color: Color(0xFFA259FF),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             content['project_name'] as String? ?? 'Design Project',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(color: textColor),
           ),
         ],
       ),
@@ -332,12 +397,17 @@ class _VideoBlock extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.play_circle_filled_rounded,
-                color: AppColors.error, size: 40),
+            Icon(
+              Icons.play_circle_filled_rounded,
+              color: AppColors.error,
+              size: 40,
+            ),
             const SizedBox(height: AppSpacing.sm),
             Text(
               content['title'] as String? ?? 'Video',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: textColor),
             ),
           ],
         ),
@@ -355,10 +425,12 @@ class _RssBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isLight ? const Color(0xFF111827) : Colors.white;
-    final subtitleColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final subtitleColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
     final articles =
         (content['articles'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ??
-            [];
+        [];
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -367,23 +439,36 @@ class _RssBlock extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.rss_feed_rounded,
-                  color: AppColors.warning, size: 18),
+              const Icon(
+                Icons.rss_feed_rounded,
+                color: AppColors.warning,
+                size: 18,
+              ),
               const SizedBox(width: 6),
-              Text('Latest Articles',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor)),
+              Text(
+                'Latest Articles',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(color: textColor),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          ...articles.take(3).map((a) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  '• ${a['title'] ?? 'Article'}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          ...articles
+              .take(3)
+              .map(
+                (a) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    '• ${a['title'] ?? 'Article'}',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              )),
+              ),
         ],
       ),
     );
@@ -398,7 +483,9 @@ class _StatsBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final subtitleColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
 
     return Center(
       child: Column(
@@ -406,14 +493,16 @@ class _StatsBlock extends StatelessWidget {
         children: [
           Text(
             content['value'] as String? ?? '0',
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: AppColors.accent,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.displayLarge?.copyWith(color: AppColors.accent),
           ),
           const SizedBox(height: 4),
           Text(
             content['label'] as String? ?? 'Metric',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: subtitleColor),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: subtitleColor),
           ),
         ],
       ),
@@ -429,7 +518,6 @@ class _PromptBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isLight ? const Color(0xFF111827) : Colors.white;
     final codeBg = isLight ? const Color(0xFFF3F4F6) : AppColors.canvasDark;
     final codeTextColor = isLight ? const Color(0xFF374151) : Colors.white;
 
@@ -443,8 +531,14 @@ class _PromptBlock extends StatelessWidget {
             children: [
               Icon(Icons.smart_toy_rounded, color: AppColors.accent, size: 18),
               SizedBox(width: 6),
-              Text('Prompt Playground',
-                  style: TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.bold)),
+              Text(
+                'Prompt Playground',
+                style: TextStyle(
+                  color: AppColors.accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -457,8 +551,13 @@ class _PromptBlock extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              content['system'] as String? ?? 'System: You are a helpful assistant...',
-              style: TextStyle(fontSize: 11, fontFamily: 'monospace', color: codeTextColor),
+              content['system'] as String? ??
+                  'System: You are a helpful assistant...',
+              style: TextStyle(
+                fontSize: 11,
+                fontFamily: 'monospace',
+                color: codeTextColor,
+              ),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -505,7 +604,9 @@ class _ProjectBlock extends StatelessWidget {
     final imageUrl = content['image_url'] as String? ?? '';
 
     final textColor = isLight ? const Color(0xFF111827) : Colors.white;
-    final descColor = isLight ? const Color(0xFF4B5563) : AppColors.textSecondary;
+    final descColor = isLight
+        ? const Color(0xFF4B5563)
+        : AppColors.textSecondary;
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -519,18 +620,21 @@ class _ProjectBlock extends StatelessWidget {
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: textColor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    color: textColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (url.isNotEmpty) ...[
                 const SizedBox(width: 4),
-                const Icon(Icons.arrow_outward_rounded,
-                    color: AppColors.textMuted, size: 16),
+                const Icon(
+                  Icons.arrow_outward_rounded,
+                  color: AppColors.textMuted,
+                  size: 16,
+                ),
               ],
             ],
           ),
@@ -538,10 +642,7 @@ class _ProjectBlock extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               desc,
-              style: TextStyle(
-                color: descColor,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: descColor, fontSize: 11),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -554,22 +655,29 @@ class _ProjectBlock extends StatelessWidget {
                 child: Wrap(
                   spacing: 4,
                   runSpacing: 4,
-                  children: skills.take(2).map((s) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          s,
-                          style: const TextStyle(
-                            color: AppColors.accent,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
+                  children: skills
+                      .take(2)
+                      .map(
+                        (s) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            s,
+                            style: const TextStyle(
+                              color: AppColors.accent,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      )).toList(),
+                      )
+                      .toList(),
                 ),
               ),
               if (imageUrl.isNotEmpty) ...[

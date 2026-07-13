@@ -54,10 +54,7 @@ class AppRouter {
         path: RoutePaths.splash,
         builder: (_, __) => const SplashScreen(),
       ),
-      GoRoute(
-        path: RoutePaths.login,
-        builder: (_, __) => const LoginScreen(),
-      ),
+      GoRoute(path: RoutePaths.login, builder: (_, __) => const LoginScreen()),
       GoRoute(
         path: RoutePaths.authCallback,
         builder: (context, state) {
@@ -90,27 +87,23 @@ class AppRouter {
         routes: [
           GoRoute(
             path: RoutePaths.editor,
-            pageBuilder: (_, __) => const NoTransitionPage(
-              child: EditorScreen(),
-            ),
+            pageBuilder: (_, __) =>
+                const NoTransitionPage(child: EditorScreen()),
           ),
           GoRoute(
             path: RoutePaths.analytics,
-            pageBuilder: (_, __) => const NoTransitionPage(
-              child: AnalyticsScreen(),
-            ),
+            pageBuilder: (_, __) =>
+                const NoTransitionPage(child: AnalyticsScreen()),
           ),
           GoRoute(
             path: RoutePaths.inbox,
-            pageBuilder: (_, __) => const NoTransitionPage(
-              child: InboxScreen(),
-            ),
+            pageBuilder: (_, __) =>
+                const NoTransitionPage(child: InboxScreen()),
           ),
           GoRoute(
             path: RoutePaths.settings,
-            pageBuilder: (_, __) => const NoTransitionPage(
-              child: SettingsScreen(),
-            ),
+            pageBuilder: (_, __) =>
+                const NoTransitionPage(child: SettingsScreen()),
           ),
         ],
       ),

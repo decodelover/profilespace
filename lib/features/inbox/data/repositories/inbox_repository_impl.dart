@@ -14,7 +14,7 @@ class InboxRepositoryImpl implements InboxRepository {
       final response = await dio.get('/messages');
       if (response.data['success'] == true) {
         final List data = response.data['data'];
-        
+
         final messages = data.map((item) {
           final map = item as Map<String, dynamic>;
           return Message(
@@ -30,13 +30,18 @@ class InboxRepositoryImpl implements InboxRepository {
 
         return Result.success(messages);
       }
-      return Result.failure(ServerFailure(message: 'Failed to fetch messages.'));
+      return Result.failure(
+        ServerFailure(message: 'Failed to fetch messages.'),
+      );
     } on DioException catch (e) {
-      return Result.failure(ServerFailure(
-        message: e.response?.data?['message']?.toString() ??
-            'Failed to load inbox.',
-        statusCode: e.response?.statusCode,
-      ));
+      return Result.failure(
+        ServerFailure(
+          message:
+              e.response?.data?['message']?.toString() ??
+              'Failed to load inbox.',
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Result.failure(ServerFailure(message: 'Unexpected error: $e'));
     }

@@ -67,22 +67,13 @@ class GlassDecoration {
   }
 
   /// Highlighted card with accent glow (used for selected states).
-  static BoxDecoration cardSelected({
-    double borderRadius = AppRadius.lg,
-  }) {
+  static BoxDecoration cardSelected({double borderRadius = AppRadius.lg}) {
     return BoxDecoration(
       color: AppColors.cardDarkTranslucent,
       borderRadius: BorderRadius.circular(borderRadius),
-      border: Border.all(
-        color: AppColors.accent,
-        width: 1.5,
-      ),
+      border: Border.all(color: AppColors.accent, width: 1.5),
       boxShadow: [
-        BoxShadow(
-          color: AppColors.accentGlow,
-          blurRadius: 20,
-          spreadRadius: 2,
-        ),
+        BoxShadow(color: AppColors.accentGlow, blurRadius: 20, spreadRadius: 2),
       ],
     );
   }
@@ -93,47 +84,46 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData get darkTheme {
-    final textTheme = GoogleFonts.interTextTheme(
-      ThemeData.dark().textTheme,
-    ).copyWith(
-      // Outfit for display/heading text
-      displayLarge: GoogleFonts.outfit(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      displayMedium: GoogleFonts.outfit(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      headlineMedium: GoogleFonts.outfit(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      titleLarge: GoogleFonts.outfit(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      // Inter for body & label text
-      bodyLarge: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-      ),
-      bodyMedium: GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      ),
-      labelLarge: GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-    );
+    final textTheme = GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
+        .copyWith(
+          // Outfit for display/heading text
+          displayLarge: GoogleFonts.outfit(
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+          displayMedium: GoogleFonts.outfit(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+          headlineMedium: GoogleFonts.outfit(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+          titleLarge: GoogleFonts.outfit(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+          // Inter for body & label text
+          bodyLarge: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textPrimary,
+          ),
+          bodyMedium: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textSecondary,
+          ),
+          labelLarge: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -186,10 +176,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
         ),
-        hintStyle: GoogleFonts.inter(
-          color: AppColors.textMuted,
-          fontSize: 14,
-        ),
+        hintStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14),
       ),
     );
   }

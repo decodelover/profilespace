@@ -81,10 +81,7 @@ Future<void> initServiceLocator() async {
 
   // ─── Repositories ──────────────────────────────────────────────────
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      remoteDataSource: sl(),
-      secureStorage: sl(),
-    ),
+    () => AuthRepositoryImpl(remoteDataSource: sl(), secureStorage: sl()),
   );
 
   sl.registerLazySingleton<PortfolioRepository>(
@@ -113,26 +110,26 @@ Future<void> initServiceLocator() async {
   sl.registerLazySingleton(() => GetMessages(sl()));
 
   // ─── BLoCs ─────────────────────────────────────────────────────────
-  sl.registerFactory(() => AuthBloc(
-        loginWithGithub: sl(),
-        logout: sl(),
-        getCachedSession: sl(),
-        loginWithEmail: sl(),
-      ));
+  sl.registerFactory(
+    () => AuthBloc(
+      loginWithGithub: sl(),
+      logout: sl(),
+      getCachedSession: sl(),
+      loginWithEmail: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => PortfolioBloc(
-        getPortfolio: sl(),
-        updateBlockLayout: sl(),
-        addBlock: sl(),
-        deleteBlock: sl(),
-        uploadImage: sl(),
-      ));
+  sl.registerFactory(
+    () => PortfolioBloc(
+      getPortfolio: sl(),
+      updateBlockLayout: sl(),
+      addBlock: sl(),
+      deleteBlock: sl(),
+      uploadImage: sl(),
+    ),
+  );
 
-  sl.registerFactory(() => AnalyticsBloc(
-        getAnalytics: sl(),
-      ));
+  sl.registerFactory(() => AnalyticsBloc(getAnalytics: sl()));
 
-  sl.registerFactory(() => InboxBloc(
-        getMessages: sl(),
-      ));
+  sl.registerFactory(() => InboxBloc(getMessages: sl()));
 }

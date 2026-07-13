@@ -52,8 +52,8 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   final GetAnalytics _getAnalytics;
 
   AnalyticsBloc({required GetAnalytics getAnalytics})
-      : _getAnalytics = getAnalytics,
-        super(const AnalyticsInitial()) {
+    : _getAnalytics = getAnalytics,
+      super(const AnalyticsInitial()) {
     on<AnalyticsFetchRequested>(_onFetch);
   }
 

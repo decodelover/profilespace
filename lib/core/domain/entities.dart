@@ -47,13 +47,13 @@ class User extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        email,
-        fullName,
-        avatarUrl,
-        professionalTitle,
-        hasCompletedOnboarding,
-      ];
+    id,
+    email,
+    fullName,
+    avatarUrl,
+    professionalTitle,
+    hasCompletedOnboarding,
+  ];
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -225,7 +225,14 @@ class PortfolioBlock extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, type, gridPosition, content, isVisible, sortOrder];
+  List<Object?> get props => [
+    id,
+    type,
+    gridPosition,
+    content,
+    isVisible,
+    sortOrder,
+  ];
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -250,12 +257,12 @@ class AnalyticsSnapshot extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalViews,
-        resumeDownloads,
-        linkClicks,
-        dailyViews,
-        countryDistribution,
-      ];
+    totalViews,
+    resumeDownloads,
+    linkClicks,
+    dailyViews,
+    countryDistribution,
+  ];
 }
 
 /// A single day's view count for charting.

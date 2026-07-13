@@ -42,10 +42,10 @@ class AnalyticsData extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalViews,
-        mobileViews,
-        desktopViews,
-        viewsOverTime,
-        countries,
-      ];
+    totalViews,
+    mobileViews,
+    desktopViews,
+    viewsOverTime,
+    countries,
+  ];
 }

@@ -118,11 +118,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required Logout logout,
     required GetCachedSession getCachedSession,
     required LoginWithEmail loginWithEmail,
-  })  : _loginWithGithub = loginWithGithub,
-        _logout = logout,
-        _getCachedSession = getCachedSession,
-        _loginWithEmail = loginWithEmail,
-        super(const AuthInitial()) {
+  }) : _loginWithGithub = loginWithGithub,
+       _logout = logout,
+       _getCachedSession = getCachedSession,
+       _loginWithEmail = loginWithEmail,
+       super(const AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
     on<AuthGithubLoginRequested>(_onGithubLogin);
     on<AuthLogoutRequested>(_onLogout);
@@ -138,16 +138,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final result = await _getCachedSession();
 
-    result.fold(
-      (failure) => emit(const AuthUnauthenticated()),
-      (session) {
-        if (session != null) {
-          emit(AuthAuthenticated(session));
-        } else {
-          emit(const AuthUnauthenticated());
-        }
-      },
-    );
+    result.fold((failure) => emit(const AuthUnauthenticated()), (session) {
+      if (session != null) {
+        emit(AuthAuthenticated(session));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
+    });
   }
 
   /// Exchanges a GitHub OAuth code for a full session.

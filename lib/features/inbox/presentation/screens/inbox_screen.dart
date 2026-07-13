@@ -41,21 +41,24 @@ class _InboxScreenState extends State<InboxScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline_rounded,
-                          color: AppColors.error, size: 48),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        color: AppColors.error,
+                        size: 48,
+                      ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
                         state.message,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textMuted,
-                            ),
+                          color: AppColors.textMuted,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       ElevatedButton.icon(
-                        onPressed: () => context
-                            .read<InboxBloc>()
-                            .add(const InboxFetchRequested()),
+                        onPressed: () => context.read<InboxBloc>().add(
+                          const InboxFetchRequested(),
+                        ),
                         icon: const Icon(Icons.refresh_rounded),
                         label: const Text('Retry'),
                       ),
@@ -73,11 +76,16 @@ class _InboxScreenState extends State<InboxScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.mail_outline_rounded,
-                            color: AppColors.textMuted, size: 64),
+                        const Icon(
+                          Icons.mail_outline_rounded,
+                          color: AppColors.textMuted,
+                          size: 64,
+                        ),
                         const SizedBox(height: AppSpacing.md),
-                        Text('No messages yet',
-                            style: Theme.of(context).textTheme.headlineMedium),
+                        Text(
+                          'No messages yet',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           'When recruiters contact you through\nyour portfolio, messages will appear here.',
@@ -122,11 +130,13 @@ class _InboxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHiring = msg.tag.toLowerCase().contains('hiring') ||
+    final isHiring =
+        msg.tag.toLowerCase().contains('hiring') ||
         msg.tag.toLowerCase().contains('recruiter');
 
     // Format date string simply
-    final dateStr = '${msg.createdAt.year}-${msg.createdAt.month.toString().padLeft(2, '0')}-${msg.createdAt.day.toString().padLeft(2, '0')}';
+    final dateStr =
+        '${msg.createdAt.year}-${msg.createdAt.month.toString().padLeft(2, '0')}-${msg.createdAt.day.toString().padLeft(2, '0')}';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -141,9 +151,13 @@ class _InboxCard extends StatelessWidget {
                 radius: 20,
                 backgroundColor: AppColors.accent.withValues(alpha: 0.15),
                 child: Text(
-                  msg.senderName.isNotEmpty ? msg.senderName[0].toUpperCase() : 'R',
+                  msg.senderName.isNotEmpty
+                      ? msg.senderName[0].toUpperCase()
+                      : 'R',
                   style: const TextStyle(
-                      color: AppColors.accent, fontWeight: FontWeight.bold),
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -151,18 +165,23 @@ class _InboxCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(msg.senderName,
-                        style: Theme.of(context).textTheme.titleLarge),
-                    Text(msg.company ?? 'Individual Recruiter',
-                        style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      msg.senderName,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      msg.company ?? 'Individual Recruiter',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ],
                 ),
               ),
-              Text(dateStr,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontSize: 11)),
+              Text(
+                dateStr,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontSize: 11),
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -178,19 +197,16 @@ class _InboxCard extends StatelessWidget {
             child: Text(
               msg.tag.toUpperCase(),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: isHiring ? AppColors.accent : AppColors.warning,
-                  ),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: isHiring ? AppColors.accent : AppColors.warning,
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
 
           // Message Body
-          Text(
-            msg.message,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(msg.message, style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.md),
 
           // Action buttons

@@ -60,19 +60,26 @@ class SettingsScreen extends StatelessWidget {
                       color: AppColors.accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: const Icon(Icons.star_rounded,
-                        color: AppColors.accent, size: 22),
+                    child: const Icon(
+                      Icons.star_rounded,
+                      color: AppColors.accent,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Free Plan',
-                            style: Theme.of(context).textTheme.titleLarge),
+                        Text(
+                          'Free Plan',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
                         const SizedBox(height: 4),
-                        Text('Upgrade to Pro for custom domains & analytics.',
-                            style: Theme.of(context).textTheme.bodyMedium),
+                        Text(
+                          'Upgrade to Pro for custom domains & analytics.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ],
                     ),
                   ),
@@ -134,11 +141,11 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textMuted,
-              fontSize: 12,
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.w600,
-            ),
+          color: AppColors.textMuted,
+          fontSize: 12,
+          letterSpacing: 1.2,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -180,19 +187,23 @@ class _SettingsTile extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(color: color),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: color),
                     ),
                     if (subtitle != null)
-                      Text(subtitle!,
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        subtitle!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded,
-                  color: AppColors.textMuted, size: 22),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+                size: 22,
+              ),
             ],
           ),
         ),

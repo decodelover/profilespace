@@ -74,9 +74,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: AppColors.accent,
-              ),
+              CircularProgressIndicator(color: AppColors.accent),
               SizedBox(height: AppSpacing.lg),
               Text(
                 'Authenticating with GitHub...',
@@ -89,10 +87,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
               SizedBox(height: AppSpacing.xs),
               Text(
                 'Completing secure token exchange.',
-                style: TextStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textMuted, fontSize: 14),
               ),
             ],
           ),

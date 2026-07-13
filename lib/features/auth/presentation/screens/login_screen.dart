@@ -80,13 +80,13 @@ class _LoginScreenState extends State<LoginScreen>
       parent: _cardEntranceController,
       curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     );
-    _cardSlide = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _cardEntranceController,
-      curve: const Interval(0.1, 0.7, curve: Curves.easeOutCubic),
-    ));
+    _cardSlide = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _cardEntranceController,
+            curve: const Interval(0.1, 0.7, curve: Curves.easeOutCubic),
+          ),
+        );
     _cardEntranceController.forward();
 
     _particleController = AnimationController(
@@ -159,11 +159,11 @@ class _LoginScreenState extends State<LoginScreen>
   void _handleEmailLogin(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-            AuthEmailLoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
+        AuthEmailLoginRequested(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -224,8 +224,9 @@ class _LoginScreenState extends State<LoginScreen>
               child: SafeArea(
                 child: Center(
                   child: SingleChildScrollView(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                    ),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 420),
@@ -241,9 +242,7 @@ class _LoginScreenState extends State<LoginScreen>
                             // ── Title ───────────────────────────
                             Text(
                               'Tspace',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge
+                              style: Theme.of(context).textTheme.displayLarge
                                   ?.copyWith(
                                     fontSize: 42,
                                     fontWeight: FontWeight.w800,
@@ -254,9 +253,7 @@ class _LoginScreenState extends State<LoginScreen>
                             Text(
                               'Your proof of work, beautifully packaged.',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: AppColors.textSecondary,
                                     fontSize: 15,
@@ -271,7 +268,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 if (state is AuthLoading) {
                                   return Padding(
                                     padding: const EdgeInsets.only(
-                                        bottom: AppSpacing.lg),
+                                      bottom: AppSpacing.lg,
+                                    ),
                                     child: Column(
                                       children: [
                                         SizedBox(
@@ -320,19 +318,19 @@ class _LoginScreenState extends State<LoginScreen>
                                 Icon(
                                   Icons.lock_rounded,
                                   size: 13,
-                                  color: AppColors.textMuted
-                                      .withValues(alpha: 0.7),
+                                  color: AppColors.textMuted.withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Secured with 256-bit encryption',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
+                                  style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         fontSize: 11,
-                                        color: AppColors.textMuted
-                                            .withValues(alpha: 0.7),
+                                        color: AppColors.textMuted.withValues(
+                                          alpha: 0.7,
+                                        ),
                                         letterSpacing: 0.3,
                                       ),
                                 ),
@@ -344,9 +342,7 @@ class _LoginScreenState extends State<LoginScreen>
                             Text(
                               'By continuing, you agree to our Terms of Service\nand Privacy Policy.',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     fontSize: 11,
                                     color: AppColors.textMuted,
@@ -373,10 +369,8 @@ class _LoginScreenState extends State<LoginScreen>
     return AnimatedBuilder(
       animation: Listenable.merge([_logoFloatController, _logoPulseController]),
       builder: (context, _) {
-        final floatOffset =
-            math.sin(_logoFloatController.value * math.pi) * 6;
-        final pulseScale =
-            0.85 + 0.15 * _logoPulseController.value;
+        final floatOffset = math.sin(_logoFloatController.value * math.pi) * 6;
+        final pulseScale = 0.85 + 0.15 * _logoPulseController.value;
 
         return Transform.translate(
           offset: Offset(0, -floatOffset),
@@ -395,8 +389,9 @@ class _LoginScreenState extends State<LoginScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.accent
-                            .withValues(alpha: 0.2 * (1 - _logoPulseController.value)),
+                        color: AppColors.accent.withValues(
+                          alpha: 0.2 * (1 - _logoPulseController.value),
+                        ),
                         width: 2,
                       ),
                     ),
@@ -424,8 +419,7 @@ class _LoginScreenState extends State<LoginScreen>
                         spreadRadius: 4,
                       ),
                       BoxShadow(
-                        color:
-                            const Color(0xFFD946EF).withValues(alpha: 0.15),
+                        color: const Color(0xFFD946EF).withValues(alpha: 0.15),
                         blurRadius: 50,
                         spreadRadius: 8,
                       ),
@@ -489,8 +483,9 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 );
               },
-              child:
-                  _showEmailForm ? _buildEmailForm(context) : _buildSocialButtons(context),
+              child: _showEmailForm
+                  ? _buildEmailForm(context)
+                  : _buildSocialButtons(context),
             ),
           ),
         ),
@@ -549,10 +544,10 @@ class _LoginScreenState extends State<LoginScreen>
               child: Text(
                 'or continue with',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
-                      letterSpacing: 0.5,
-                    ),
+                  fontSize: 12,
+                  color: AppColors.textMuted,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
             Expanded(
@@ -586,15 +581,13 @@ class _LoginScreenState extends State<LoginScreen>
             label: Text(
               'Sign up with email',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.accent,
-                    fontSize: 14,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: AppColors.accent,
+                fontSize: 14,
+              ),
             ),
             style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: AppColors.accent.withValues(alpha: 0.3),
-              ),
+              side: BorderSide(color: AppColors.accent.withValues(alpha: 0.3)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
@@ -640,9 +633,9 @@ class _LoginScreenState extends State<LoginScreen>
               Text(
                 'Continue with Email',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
               ),
             ],
           ),
@@ -672,23 +665,24 @@ class _LoginScreenState extends State<LoginScreen>
             controller: _passwordController,
             obscureText: _obscurePassword,
             style: const TextStyle(color: Colors.white, fontSize: 15),
-            decoration: _inputDecoration(
-              context,
-              label: 'Password',
-              icon: Icons.lock_outline_rounded,
-            ).copyWith(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_rounded
-                      : Icons.visibility_rounded,
-                  color: AppColors.textMuted,
-                  size: 20,
+            decoration:
+                _inputDecoration(
+                  context,
+                  label: 'Password',
+                  icon: Icons.lock_outline_rounded,
+                ).copyWith(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off_rounded
+                          : Icons.visibility_rounded,
+                      color: AppColors.textMuted,
+                      size: 20,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                  ),
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
-              ),
-            ),
             validator: (value) {
               if (value == null || value.length < 6) {
                 return 'Password must be at least 6 characters';
@@ -728,13 +722,12 @@ class _LoginScreenState extends State<LoginScreen>
                   child: Center(
                     child: Text(
                       'Sign In / Register',
-                      style:
-                          Theme.of(context).textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15,
-                                color: Colors.white,
-                                letterSpacing: 0.3,
-                              ),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: Colors.white,
+                        letterSpacing: 0.3,
+                      ),
                     ),
                   ),
                 ),
@@ -756,9 +749,9 @@ class _LoginScreenState extends State<LoginScreen>
               label: Text(
                 'Back to social sign-in',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textMuted,
-                      fontSize: 13,
-                    ),
+                  color: AppColors.textMuted,
+                  fontSize: 13,
+                ),
               ),
             ),
           ),
@@ -786,36 +779,23 @@ class _LoginScreenState extends State<LoginScreen>
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: Colors.white.withValues(alpha: 0.08),
-        ),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: Colors.white.withValues(alpha: 0.08),
-        ),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.accent,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.error,
-          width: 1.0,
-        ),
+        borderSide: const BorderSide(color: AppColors.error, width: 1.0),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.error,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
     );
   }
@@ -897,10 +877,10 @@ class _SocialButtonState extends State<_SocialButton> {
                   Text(
                     widget.label,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: widget.accentColor,
-                          fontSize: 14,
-                        ),
+                      fontWeight: FontWeight.w600,
+                      color: widget.accentColor,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
@@ -971,7 +951,12 @@ class _AuroraPainter extends CustomPainter {
   }
 
   void _drawOrb(
-      Canvas canvas, Offset center, double radius, Color color, double alpha) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color color,
+    double alpha,
+  ) {
     final paint = Paint()
       ..shader = RadialGradient(
         colors: [
