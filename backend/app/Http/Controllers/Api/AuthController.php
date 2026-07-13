@@ -220,6 +220,68 @@ class AuthController extends Controller
         ]);
     }
 
+    public function syncFirebaseUser(Request $request): JsonResponse
+    {
+        $token = $request->input('id_token') ?? $request->bearerToken();
+        
+        $email = $request->input('email');
+        $name = $request->input('name') ?? 'Firebase User';
+        $uid = $request->input('uid') ?? 'fb_' . Str::random(24);
+        $provider = $request->input('provider') ?? 'firebase';
+
+        if ($token) {
+            // Attempt to parse RS256 JWT claims natively
+            $segments = explode('.', $token);
+            if (count($segments) === 3) {
+                $payloadJson = base64_decode(str_replace(['-', '_'], ['+', '/'], $segments[1]));
+                $payload = json_decode($payloadJson, true);
+                if (is_array($payload)) {
+                    $email = $payload['email'] ?? $email;
+                    $name = $payload['name'] ?? $payload['email'] ?? $name;
+                    $uid = $payload['sub'] ?? $payload['user_id'] ?? $uid;
+                    $provider = $payload['firebase']['sign_in_provider'] ?? $provider;
+                }
+            }
+        }
+
+        if (empty($email)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email address is required to sync account.',
+            ], 400);
+        }
+
+        $user = DB::transaction(function () use ($email, $name, $uid, $provider) {
+            $user = User::where('firebase_uid', $uid)
+                ->orWhere('email', $email)
+                ->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'firebase_uid' => $uid,
+                    'auth_provider' => $provider,
+                    'has_completed_onboarding' => false,
+                ]);
+            } else {
+                $user->update([
+                    'firebase_uid' => $uid,
+                    'auth_provider' => $provider,
+                ]);
+            }
+
+            $this->ensureStarterData($user);
+
+            return $user;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->issueSession($user),
+        ]);
+    }
+
     private function issueSession(User $user): array
     {
         $accessToken = $user->createToken('mobile')->plainTextToken;
@@ -337,6 +399,12 @@ class AuthController extends Controller
             'avatar_url' => $user->avatar_url,
             'professional_title' => $user->profile?->professional_title,
             'has_completed_onboarding' => $user->has_completed_onboarding,
+            'firebase_uid' => $user->firebase_uid,
+            'auth_provider' => $user->auth_provider,
+            'plan_id' => $user->plan_id,
+            'specialization' => $user->specialization,
+            'onboarding_step' => $user->onboarding_step,
+            'is_published' => $user->is_published,
             'profile' => $user->profile,
             'portfolio' => $user->portfolio,
         ];

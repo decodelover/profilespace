@@ -18,6 +18,64 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Seed Plans
+        \App\Models\Plan::updateOrCreate(
+            ['id' => 'free'],
+            [
+                'name' => 'Free Plan',
+                'price' => 0.00,
+                'features' => json_encode(['Built-in subdomain', 'Up to 1 project', 'Basic theme']),
+                'limits' => json_encode(['projects' => 1, 'custom_domain' => false, 'analytics' => false]),
+            ]
+        );
+        \App\Models\Plan::updateOrCreate(
+            ['id' => 'pro'],
+            [
+                'name' => 'Pro Plan',
+                'price' => 8.00,
+                'features' => json_encode(['Full custom domain', 'Unlimited projects', 'Page analytics']),
+                'limits' => json_encode(['projects' => -1, 'custom_domain' => true, 'analytics' => true]),
+            ]
+        );
+        \App\Models\Plan::updateOrCreate(
+            ['id' => 'premium'],
+            [
+                'name' => 'Premium VIP',
+                'price' => 19.00,
+                'features' => json_encode(['VIP routing', 'Advanced SEO', 'Priority support']),
+                'limits' => json_encode(['projects' => -1, 'custom_domain' => true, 'analytics' => true, 'vip_support' => true]),
+            ]
+        );
+
+        // Seed Templates
+        \App\Models\Template::updateOrCreate(
+            ['id' => 'minimal_dark'],
+            [
+                'name' => 'Minimal Dark',
+                'preview_image_url' => 'https://tspace.me/previews/minimal_dark.png',
+                'category' => 'Dark',
+                'config' => json_encode(['bg' => '#0F172A', 'card' => 'rgba(255,255,255,0.03)']),
+            ]
+        );
+        \App\Models\Template::updateOrCreate(
+            ['id' => 'minimal_light'],
+            [
+                'name' => 'Minimal Light',
+                'preview_image_url' => 'https://tspace.me/previews/minimal_light.png',
+                'category' => 'Light',
+                'config' => json_encode(['bg' => '#F9FAFB', 'card' => '#FFFFFF']),
+            ]
+        );
+        \App\Models\Template::updateOrCreate(
+            ['id' => 'bento_creative'],
+            [
+                'name' => 'Bento Creative',
+                'preview_image_url' => 'https://tspace.me/previews/bento_creative.png',
+                'category' => 'Artistic',
+                'config' => json_encode(['bg' => '#1E1B4B', 'card' => 'rgba(255,255,255,0.02)']),
+            ]
+        );
+
         $user = User::updateOrCreate(
             ['email' => 'demo@tspace.me'],
             [

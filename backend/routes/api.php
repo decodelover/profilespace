@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\UploadController;
+use App\Http\Controllers\Api\UserController;
 
 Route::get('/health', fn () => response()->json([
     'success' => true,
@@ -18,6 +19,7 @@ Route::get('/health', fn () => response()->json([
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'loginWithEmail']);
+Route::post('/auth/sync', [AuthController::class, 'syncFirebaseUser']);
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 Route::post('/auth/github/callback', [AuthController::class, 'loginWithGithub']);
 Route::post('/auth/google/callback', [AuthController::class, 'loginWithGoogle']);
@@ -31,6 +33,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/logout-all', [AuthController::class, 'logoutAll']);
     Route::get('/auth/me', [AuthController::class, 'me']);
+
+    // User & Onboarding Setup routes
+    Route::get('/users/me', [UserController::class, 'me']);
+    Route::patch('/users/me', [UserController::class, 'update']);
+    Route::get('/specializations', [UserController::class, 'specializations']);
+    Route::patch('/users/me/specialization', [UserController::class, 'updateSpecialization']);
+    Route::put('/users/me/profile', [UserController::class, 'updateProfile']);
+    Route::get('/plans', [UserController::class, 'plans']);
+    Route::patch('/users/me/plan', [UserController::class, 'updatePlan']);
+    Route::get('/templates', [UserController::class, 'templates']);
+    Route::patch('/users/me/template', [UserController::class, 'updateTemplate']);
+    Route::get('/domains/check', [UserController::class, 'checkDomain']);
+    Route::post('/publish', [UserController::class, 'publish']);
+    Route::get('/publish/{job_id}/status', [UserController::class, 'publishStatus']);
+    Route::get('/sites/me', [UserController::class, 'site']);
 
     // Profile and Onboarding Routes
     Route::put('/profile', [PortfolioController::class, 'updateProfile']);

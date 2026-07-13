@@ -50,6 +50,12 @@ class User extends Authenticatable
         'provider_id',
         'avatar_url',
         'has_completed_onboarding',
+        'firebase_uid',
+        'auth_provider',
+        'plan_id',
+        'specialization',
+        'onboarding_step',
+        'is_published',
     ];
 
     /**
@@ -100,5 +106,20 @@ class User extends Authenticatable
     public function refreshTokens(): HasMany
     {
         return $this->hasMany(RefreshToken::class);
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class, 'plan_id');
+    }
+
+    public function publishJobs(): HasMany
+    {
+        return $this->hasMany(PublishJob::class);
+    }
+
+    public function site(): HasOne
+    {
+        return $this->hasOne(Site::class);
     }
 }
