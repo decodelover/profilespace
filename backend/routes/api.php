@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Profile and Onboarding Routes
     Route::put('/profile', [PortfolioController::class, 'updateProfile']);
     Route::post('/onboarding/complete', [PortfolioController::class, 'completeOnboarding']);
+    Route::get('/portfolios/check-slug', [PortfolioController::class, 'checkSlugAvailability']);
 
     // Portfolio Management Routes
     Route::get('/portfolios/me', [PortfolioController::class, 'getPortfolio']);

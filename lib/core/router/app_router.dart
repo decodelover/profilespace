@@ -15,6 +15,10 @@ import '../../features/onboarding/presentation/screens/role_selector_screen.dart
 import '../../features/onboarding/presentation/screens/details_form_screen.dart';
 import '../../features/onboarding/presentation/screens/integration_screen.dart';
 import '../../features/onboarding/presentation/screens/launch_screen.dart';
+import '../../features/onboarding/presentation/screens/plan_selection_screen.dart';
+import '../../features/onboarding/presentation/screens/overview_template_screen.dart';
+import '../../features/onboarding/presentation/screens/publish_generation_screen.dart';
+import '../../features/onboarding/presentation/screens/live_preview_screen.dart';
 import '../../features/portfolio_editor/presentation/screens/editor_screen.dart';
 import '../../features/analytics/presentation/screens/analytics_screen.dart';
 import '../../features/inbox/presentation/screens/inbox_screen.dart';
@@ -31,6 +35,10 @@ abstract final class RoutePaths {
   static const String onboardingDetails = '/onboarding/details';
   static const String onboardingIntegration = '/onboarding/integration';
   static const String onboardingLaunch = '/onboarding/launch';
+  static const String onboardingPlan = '/onboarding/plan';
+  static const String onboardingTemplate = '/onboarding/template';
+  static const String onboardingPublish = '/onboarding/publish';
+  static const String onboardingPreview = '/onboarding/preview';
   static const String editor = '/editor';
   static const String analytics = '/analytics';
   static const String inbox = '/inbox';
@@ -79,6 +87,22 @@ class AppRouter {
       GoRoute(
         path: RoutePaths.onboardingLaunch,
         builder: (_, __) => const LaunchScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.onboardingPlan,
+        builder: (_, __) => const PlanSelectionScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.onboardingTemplate,
+        builder: (_, __) => const OverviewTemplateScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.onboardingPublish,
+        builder: (_, __) => const PublishGenerationScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.onboardingPreview,
+        builder: (_, __) => const LivePreviewScreen(),
       ),
 
       // ─── Main App Shell (Bottom Navigation) ──────────────────────

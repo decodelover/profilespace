@@ -365,6 +365,24 @@ class PortfolioController extends Controller
         ]);
     }
 
+    public function checkSlugAvailability(Request $request): JsonResponse
+    {
+        $request->validate([
+            'slug' => 'required|string|alpha_dash|max:120',
+        ]);
+        $slug = $request->query('slug');
+        $portfolio = $this->portfolioFor($request);
+
+        $exists = \App\Models\Portfolio::where('slug', $slug)
+            ->where('id', '!=', $portfolio->id)
+            ->exists();
+
+        return response()->json([
+            'success' => true,
+            'available' => !$exists,
+        ]);
+    }
+
     public function publicShow(string $slug): JsonResponse
     {
         $cacheKey = "portfolio_slug:$slug";

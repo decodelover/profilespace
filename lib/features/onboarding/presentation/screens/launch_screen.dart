@@ -1,11 +1,10 @@
-/// Onboarding Screen 4 — Portfolio Launch & Preview
+/// Onboarding Screen 5 — Domain Setup
 ///
-/// Displays a live personalized preview of the portfolio (supporting both Dark and Light modes),
-/// and calls the backend API to save the profile, domains, custom projects list, and finalize onboarding.
+/// Lets the user configure their subdomain (and custom domain if on Pro/Premium).
+/// Implements debounced real-time availability checking via the backend API.
 library;
 
-import 'dart:convert';
-import 'package:confetti/confetti.dart';
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,20 +22,15 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
-  final TextEditingController _slugController = TextEditingController(
-    text: 'yourname',
-  );
-  final TextEditingController _domainController = TextEditingController(
-    text: 'yourdomain.com',
-  );
+  final TextEditingController _slugController = TextEditingController();
+  final TextEditingController _domainController = TextEditingController();
 
-  final ConfettiController _confettiController = ConfettiController(
-    duration: const Duration(seconds: 3),
-  );
+  Timer? _debounce;
+  bool _isCheckingSlug = false;
+  bool _isSlugAvailable = true;
+  String? _slugError;
 
-  bool _isPro = false;
-  bool _isPublishing = false;
-  bool _isPublished = false;
+  bool _isProOrPremium = false;
   bool _didInit = false;
 
   Map<String, String> get _queryParams {
@@ -44,24 +38,17 @@ class _LaunchScreenState extends State<LaunchScreen> {
     return GoRouterState.of(context).uri.queryParameters;
   }
 
-  String get _role => _queryParams['role'] ?? 'developer';
-  String get _fullName => _queryParams['full_name'] ?? 'Your Name';
-  String get _title => _queryParams['title'] ?? 'Software Engineer';
-  String get _bio => _queryParams['bio'] ?? 'Hello, welcome to my portfolio!';
-  String get _skills => _queryParams['skills'] ?? '';
-  String get _avatarUrl => _queryParams['avatar_url'] ?? '';
-  String get _accentColorHex => _queryParams['accent_color'] ?? '#6366F1';
-  String get _layoutTemplate =>
-      _queryParams['layout_template'] ?? 'minimal_dark';
+  String get _fullName => _queryParams['full_name'] ?? 'User';
   String get _plan => _queryParams['plan'] ?? 'free';
-  String get _projectsParam => _queryParams['projects'] ?? '[]';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didInit) {
       _didInit = true;
-      _isPro = _plan == 'pro';
+      _isProOrPremium = _plan == 'pro' || _plan == 'premium';
+
+      // Pre-fill slug based on name
       final cleanedName = _fullName.toLowerCase().replaceAll(
         RegExp(r'[^a-z0-9]'),
         '',
@@ -69,146 +56,128 @@ class _LaunchScreenState extends State<LaunchScreen> {
       if (cleanedName.isNotEmpty) {
         _slugController.text = cleanedName;
         _domainController.text = '$cleanedName.com';
+        _checkSlug(cleanedName);
+      } else {
+        _slugController.text = 'yourname';
+        _domainController.text = 'yourdomain.com';
       }
     }
   }
 
-  Color get _themeColor {
-    return Color(int.parse(_accentColorHex.replaceFirst('#', '0xFF')));
+  void _onSlugChanged(String text) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    setState(() {
+      _isCheckingSlug = true;
+      _slugError = null;
+    });
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final cleanText = text.trim().toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9\-]'),
+        '',
+      );
+      if (cleanText != text) {
+        _slugController.text = cleanText;
+        _slugController.selection = TextSelection.fromPosition(
+          TextPosition(offset: cleanText.length),
+        );
+      }
+      _checkSlug(cleanText);
+    });
   }
 
-  List<dynamic> get _parsedProjects {
-    try {
-      return jsonDecode(_projectsParam) as List<dynamic>;
-    } catch (_) {
-      return [];
-    }
-  }
-
-  Future<void> _handlePublish() async {
-    final slug = _slugController.text.trim();
-    final customDomain = _domainController.text.trim();
-
-    if (_isPro && customDomain.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid custom domain'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+  Future<void> _checkSlug(String slug) async {
+    if (slug.isEmpty) {
+      setState(() {
+        _isCheckingSlug = false;
+        _isSlugAvailable = false;
+        _slugError = 'Slug cannot be empty';
+      });
       return;
     }
-
-    if (!_isPro && slug.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a custom slug'),
-          backgroundColor: AppColors.error,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isPublishing = true);
-    HapticFeedback.heavyImpact();
 
     try {
       final dio = sl<Dio>();
-
-      final List<String> skillsList = _skills
-          .split(',')
-          .map((s) => s.trim())
-          .where((s) => s.isNotEmpty)
-          .toList();
-
-      // 1. Setup domain
-      if (_isPro) {
-        await dio.post(
-          '/portfolios/me/domain',
-          data: {'hostname': customDomain},
-        );
-      } else {
-        try {
-          await dio.delete('/portfolios/me/domain');
-        } catch (_) {}
-      }
-
-      // 2. Onboarding complete
-      final response = await dio.post(
-        '/onboarding/complete',
-        data: {
-          'role': _role,
-          'professional_title': _title,
-          'full_name': _fullName,
-          'bio': _bio,
-          'avatar_url': _avatarUrl,
-          'accent_color': _accentColorHex,
-          'layout_template': _layoutTemplate,
-          'skills': skillsList,
-          'projects': _parsedProjects,
-        },
+      final response = await dio.get(
+        '/portfolios/check-slug',
+        queryParameters: {'slug': slug},
       );
-
-      if (response.data['success'] == true) {
-        // Update slug settings
-        if (!_isPro) {
-          await dio.put('/portfolios/me/settings', data: {'slug': slug});
-        }
-
-        if (mounted) {
-          setState(() {
-            _isPublishing = false;
-            _isPublished = true;
-          });
-
-          _confettiController.play();
-          HapticFeedback.heavyImpact();
-
-          await Future.delayed(const Duration(seconds: 2));
-          if (mounted) {
-            context.go(RoutePaths.editor);
-          }
-        }
-      }
-    } catch (e) {
       if (mounted) {
-        setState(() => _isPublishing = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to publish site: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        setState(() {
+          _isCheckingSlug = false;
+          _isSlugAvailable = response.data['available'] == true;
+          _slugError = _isSlugAvailable
+              ? null
+              : 'This subdomain is already taken';
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isCheckingSlug = false;
+          _isSlugAvailable = true; // Fallback to allow progress
+          _slugError = null;
+        });
       }
     }
+  }
+
+  void _onCreateAndPublish() {
+    final slug = _slugController.text.trim();
+    final customDomain = _domainController.text.trim();
+
+    if (slug.isEmpty) {
+      setState(() => _slugError = 'Slug cannot be empty');
+      return;
+    }
+
+    if (!_isSlugAvailable) {
+      return;
+    }
+
+    HapticFeedback.mediumImpact();
+
+    // Propagate all query parameters plus slug/domain to publishing loading screen
+    final newParams = Map<String, String>.from(_queryParams);
+    newParams['slug'] = slug;
+    if (_isProOrPremium && customDomain.isNotEmpty) {
+      newParams['custom_domain'] = customDomain;
+    }
+
+    final uri = Uri(
+      path: RoutePaths.onboardingPublish,
+      queryParameters: newParams,
+    );
+    context.go(uri.toString());
   }
 
   @override
   void dispose() {
     _slugController.dispose();
     _domainController.dispose();
-    _confettiController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTemplate = _layoutTemplate != 'minimal_light';
+    final activeColor = _plan == 'premium'
+        ? const Color(0xFFEC4899)
+        : (_plan == 'pro' ? const Color(0xFF6366F1) : const Color(0xFF94A3B8));
 
     return Scaffold(
       backgroundColor: const Color(0xFF050816),
       body: Stack(
-        alignment: Alignment.topCenter,
         children: [
-          // Background Glows
+          // Background ambient glows
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  center: const Alignment(-0.8, -0.6),
-                  radius: 1.2,
+                  center: const Alignment(0.6, -0.6),
+                  radius: 1.1,
                   colors: [
-                    _themeColor.withValues(alpha: 0.12),
+                    activeColor.withValues(alpha: 0.08),
                     Colors.transparent,
                   ],
                 ),
@@ -217,136 +186,225 @@ class _LaunchScreenState extends State<LaunchScreen> {
           ),
 
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Column(
-                children: [
-                  const SizedBox(height: AppSpacing.md),
-                  _buildHeader(),
-                  const SizedBox(height: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Step Indicator & Back Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          final uri = Uri(
+                            path: RoutePaths.onboardingTemplate,
+                            queryParameters: _queryParams,
+                          );
+                          context.go(uri.toString());
+                        },
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Step 5 of 6',
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
 
-                  // Phone preview
-                  Expanded(child: _buildMockPreview(isDarkTemplate)),
-                  const SizedBox(height: 16),
+                // Step Progress Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
+                  child: Container(
+                    height: 4,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: 5 / 6,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: activeColor,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
 
-                  // Selected plan tag
-                  _buildPlanTag(),
-                  const SizedBox(height: 12),
+                // Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Set up your domain',
+                        style: Theme.of(context).textTheme.displayMedium
+                            ?.copyWith(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _isProOrPremium
+                            ? 'Configure your custom domain or subdomain configuration below.'
+                            : 'Set up your free subdomain. You can upgrade to a custom domain anytime.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-                  // URL input field
-                  _buildUrlInputField(),
-                  const SizedBox(height: 16),
+                // Inputs
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ─── Subdomain Section ───
+                            const Text(
+                              'CHOOSE SUBDOMAIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildSubdomainField(activeColor),
+                            if (_slugError != null) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                _slugError!,
+                                style: const TextStyle(
+                                  color: AppColors.error,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 28),
 
-                  // Publish CTA Button
-                  _buildPublishButton(),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-              ),
+                            // ─── Custom Domain Section (Pro/Premium) ───
+                            _buildCustomDomainSection(activeColor),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Bottom Fixed CTA Button
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          colors: [
+                            _isSlugAvailable
+                                ? activeColor
+                                : AppColors.textMuted,
+                            _isSlugAvailable
+                                ? activeColor.withValues(alpha: 0.8)
+                                : AppColors.textMuted,
+                          ],
+                        ),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _isSlugAvailable && !_isCheckingSlug
+                            ? _onCreateAndPublish
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          disabledForegroundColor: Colors.white.withValues(
+                            alpha: 0.5,
+                          ),
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          'Create & Publish Site',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-
-          // Confetti
-          ConfettiWidget(
-            confettiController: _confettiController,
-            blastDirectionality: BlastDirectionality.explosive,
-            shouldLoop: false,
-            numberOfParticles: 40,
-            gravity: 0.25,
-            colors: [
-              _themeColor,
-              AppColors.accent,
-              AppColors.success,
-              AppColors.warning,
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      children: [
-        Text(
-          _isPublished ? 'You\'re live! 🎉' : 'Verify & launch site',
-          style: Theme.of(context).textTheme.displayMedium?.copyWith(
-            fontSize: 26,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          _isPublished
-              ? 'Your bento-style portfolio has been auto-built successfully.'
-              : 'Review your site mock layout preview before launching.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-            fontSize: 13,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPlanTag() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: _themeColor.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _themeColor.withValues(alpha: 0.2), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            _isPro ? Icons.star_rounded : Icons.insert_link_rounded,
-            size: 16,
-            color: _themeColor,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            _isPro ? 'Pro Plan (\$8/mo) Selected' : 'Free Plan Selected',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUrlInputField() {
+  Widget _buildSubdomainField(Color activeColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.25),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(
+          color: _slugError != null
+              ? AppColors.error
+              : (_isSlugAvailable
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppColors.error),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
-          Icon(
-            _isPro ? Icons.language_rounded : Icons.link_rounded,
-            color: _themeColor,
-            size: 20,
-          ),
+          Icon(Icons.link_rounded, color: activeColor, size: 20),
           const SizedBox(width: 12),
-          if (!_isPro)
-            const Text(
-              'tspace.me/',
-              style: TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           Expanded(
             child: TextField(
-              controller: _isPro ? _domainController : _slugController,
+              controller: _slugController,
+              onChanged: _onSlugChanged,
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -354,266 +412,173 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 filled: false,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
+                hintText: 'yourname',
+                hintStyle: TextStyle(color: AppColors.textMuted),
               ),
               style: TextStyle(
-                color: _themeColor,
+                color: activeColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
+          const Text(
+            '.tspace.me',
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (_isCheckingSlug)
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          else if (_slugController.text.isNotEmpty)
+            Icon(
+              _isSlugAvailable
+                  ? Icons.check_circle_rounded
+                  : Icons.cancel_rounded,
+              color: _isSlugAvailable ? AppColors.success : AppColors.error,
+              size: 18,
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildPublishButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: Container(
+  Widget _buildCustomDomainSection(Color activeColor) {
+    if (!_isProOrPremium) {
+      // Locked state for Free Plan
+      return Container(
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [_themeColor, _themeColor.withValues(alpha: 0.8)],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: _themeColor.withValues(alpha: 0.3),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ElevatedButton.icon(
-          onPressed: _isPublishing || _isPublished ? null : _handlePublish,
-          icon: _isPublishing
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : Icon(
-                  _isPublished
-                      ? Icons.check_circle
-                      : Icons.rocket_launch_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-          label: Text(
-            _isPublishing
-                ? 'Building & Launching...'
-                : _isPublished
-                ? 'Published!'
-                : 'Publish My Site',
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMockPreview(bool isDark) {
-    final previewProjects = _parsedProjects;
-    final primaryProjTitle = previewProjects.isNotEmpty
-        ? (previewProjects[0]['title'] ?? 'My Project')
-        : 'My Project';
-
-    // Set mockup colors based on theme settings choice
-    final bgColor = isDark ? AppColors.canvasDark : const Color(0xFFF9FAFB);
-    final cardBgColor = isDark
-        ? Colors.white.withValues(alpha: 0.03)
-        : Colors.white;
-    final cardBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.06);
-    final mainTextColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtitleColor = isDark
-        ? AppColors.textSecondary
-        : const Color(0xFF4B5563);
-
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.08),
-          width: 1.5,
-        ),
-        color: bgColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        children: [
-          // Profile block
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: cardBgColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: cardBorderColor),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 22,
-                  backgroundColor: _themeColor.withValues(alpha: 0.15),
-                  backgroundImage: _avatarUrl.isNotEmpty
-                      ? NetworkImage(_avatarUrl)
-                      : null,
-                  child: _avatarUrl.isEmpty
-                      ? Icon(Icons.person, color: _themeColor, size: 22)
-                      : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _fullName,
-                        style: TextStyle(
-                          color: mainTextColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        _title,
-                        style: TextStyle(color: subtitleColor, fontSize: 11),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          // Bento blocks preview
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      _skeletonBlock(
-                        flex: 3,
-                        color: _themeColor,
-                        icon: Icons.folder_open_rounded,
-                        title: primaryProjTitle,
-                        isDark: isDark,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      _skeletonBlock(
-                        flex: 2,
-                        color: AppColors.success,
-                        icon: Icons.trending_up_rounded,
-                        title: 'Stats counter',
-                        isDark: isDark,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _skeletonBlock(
-                        flex: 2,
-                        color: AppColors.warning,
-                        icon: Icons.link_rounded,
-                        title: 'Connect Link',
-                        isDark: isDark,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      _skeletonBlock(
-                        flex: 3,
-                        color: _themeColor,
-                        icon: Icons.auto_awesome_rounded,
-                        title: 'About Block',
-                        isDark: isDark,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _skeletonBlock({
-    required int flex,
-    required Color color,
-    required IconData icon,
-    required String title,
-    required bool isDark,
-  }) {
-    final blockBgColor = isDark
-        ? color.withValues(alpha: 0.05)
-        : color.withValues(alpha: 0.08);
-    final textStyleColor = isDark
-        ? Colors.white.withValues(alpha: 0.8)
-        : const Color(0xFF1F2937);
-
-    return Expanded(
-      flex: flex,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: blockBgColor,
-          border: Border.all(color: color.withValues(alpha: 0.18)),
+          color: Colors.white.withValues(alpha: 0.02),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 18),
-            const SizedBox(height: 6),
-            Text(
-              title,
+            const Row(
+              children: [
+                Icon(
+                  Icons.lock_outline_rounded,
+                  color: AppColors.textMuted,
+                  size: 16,
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'CUSTOM DOMAIN SUPPORT',
+                  style: TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Hook up your own custom domain (e.g. yourname.com) to establish a unique professional brand.',
               style: TextStyle(
-                color: textStyleColor,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+                fontSize: 13,
+                height: 1.4,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 14),
+            GestureDetector(
+              onTap: () {
+                // Navigate back to pricing plan screen
+                final uri = Uri(
+                  path: RoutePaths.onboardingPlan,
+                  queryParameters: _queryParams,
+                );
+                context.go(uri.toString());
+              },
+              child: const Text(
+                'Upgrade to Pro for Custom Domains →',
+                style: TextStyle(
+                  color: Color(0xFF6366F1),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ],
         ),
-      ),
+      );
+    }
+
+    // Enabled state for Pro/Premium Plan
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'CONNECT CUSTOM DOMAIN (PRO)',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.03),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.language_rounded,
+                color: Color(0xFF6366F1),
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextField(
+                  controller: _domainController,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    filled: false,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintText: 'yourname.com',
+                    hintStyle: TextStyle(color: AppColors.textMuted),
+                  ),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          'Ensure you point your domain\'s DNS A-record to our server IP.',
+          style: TextStyle(color: AppColors.textMuted, fontSize: 11),
+        ),
+      ],
     );
   }
 }

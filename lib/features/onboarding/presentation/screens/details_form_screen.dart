@@ -1,8 +1,7 @@
-/// Onboarding Screen 3 — Details Form
+/// Onboarding Screen 2 — Dynamic Profile Form
 ///
-/// Collects user details (Name, Title, Bio, Skills), profile photo,
-/// dark/light theme, accent color, and project list (restricted to 1 on Free,
-/// unlimited on Pro). Builds the query payload and goes directly to Launch Screen.
+/// Collects user details dynamically based on their specialization/role choice.
+/// Implements background local caching using FlutterSecureStorage.
 library;
 
 import 'dart:convert';
@@ -10,8 +9,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/domain/entities.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -77,8 +78,12 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
   final _skillsController = TextEditingController();
   final _photoUrlController = TextEditingController();
 
-  String _selectedPlan = 'free'; // 'free' or 'pro'
-  String _layoutTemplate = 'minimal_dark'; // 'minimal_dark' or 'minimal_light'
+  // Dynamic Fields based on Role
+  final _gitLinkController = TextEditingController();
+  final _specialtyController = TextEditingController();
+  final _socialLinkController = TextEditingController();
+
+  final String _layoutTemplate = 'minimal_dark';
   String _selectedColor = '#6366F1'; // Default Indigo
 
   final List<ProjectInput> _projects = [];
@@ -112,15 +117,19 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       duration: const Duration(seconds: 20),
     )..repeat();
 
-    // Init first project input
+    // Default project load
     _addProject(
-      title: 'Tspace Portfolio App',
-      desc: 'Mobile portfolio builder using Flutter and Laravel.',
+      title: 'Personal Portfolio App',
+      desc: 'Showcasing bento items with responsive web layouts.',
       url: 'https://tspace.me',
-      skills: 'Flutter, Dart, Laravel',
+      skills: 'Flutter, Dart, CSS',
       image:
           'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600',
     );
+
+    // Initialize Local Cache listeners
+    _setupCachingListeners();
+    _loadCachedData();
   }
 
   @override
@@ -128,17 +137,96 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     super.didChangeDependencies();
     if (!_didInit) {
       _didInit = true;
-      // Set default title & photo based on role
       _titleController.text = switch (_role) {
         ProfessionalRole.developer => 'Software Engineer',
         ProfessionalRole.designer => 'UI/UX Designer',
-        ProfessionalRole.writer => 'Tech Writer',
-        ProfessionalRole.contentCreator => 'Video Creator',
-        ProfessionalRole.promptEngineer => 'AI Prompt Engineer',
+        ProfessionalRole.photographer => 'Visual Artist',
+        ProfessionalRole.writer => 'Technical Writer',
+        ProfessionalRole.videographer => 'Video Producer',
+        ProfessionalRole.musician => 'Composer / Songwriter',
+        ProfessionalRole.marketer => 'Growth Marketer',
+        ProfessionalRole.consultant => 'Business Consultant',
       };
       _photoUrlController.text =
           'https://ui-avatars.com/api/?name=User&background=6366F1&color=fff';
     }
+  }
+
+  void _setupCachingListeners() {
+    final storage = sl<FlutterSecureStorage>();
+    _nameController.addListener(() {
+      storage.write(key: 'onboarding_name', value: _nameController.text);
+    });
+    _titleController.addListener(() {
+      storage.write(key: 'onboarding_title', value: _titleController.text);
+    });
+    _bioController.addListener(() {
+      storage.write(key: 'onboarding_bio', value: _bioController.text);
+    });
+    _skillsController.addListener(() {
+      storage.write(key: 'onboarding_skills', value: _skillsController.text);
+    });
+    _photoUrlController.addListener(() {
+      storage.write(key: 'onboarding_photo', value: _photoUrlController.text);
+    });
+    _gitLinkController.addListener(() {
+      storage.write(key: 'onboarding_git', value: _gitLinkController.text);
+    });
+    _specialtyController.addListener(() {
+      storage.write(
+        key: 'onboarding_specialty',
+        value: _specialtyController.text,
+      );
+    });
+    _socialLinkController.addListener(() {
+      storage.write(
+        key: 'onboarding_social',
+        value: _socialLinkController.text,
+      );
+    });
+  }
+
+  Future<void> _loadCachedData() async {
+    try {
+      final storage = sl<FlutterSecureStorage>();
+      final cachedName = await storage.read(key: 'onboarding_name');
+      final cachedTitle = await storage.read(key: 'onboarding_title');
+      final cachedBio = await storage.read(key: 'onboarding_bio');
+      final cachedSkills = await storage.read(key: 'onboarding_skills');
+      final cachedPhoto = await storage.read(key: 'onboarding_photo');
+      final cachedGit = await storage.read(key: 'onboarding_git');
+      final cachedSpecialty = await storage.read(key: 'onboarding_specialty');
+      final cachedSocial = await storage.read(key: 'onboarding_social');
+
+      if (mounted) {
+        setState(() {
+          if (cachedName != null && cachedName.isNotEmpty) {
+            _nameController.text = cachedName;
+          }
+          if (cachedTitle != null && cachedTitle.isNotEmpty) {
+            _titleController.text = cachedTitle;
+          }
+          if (cachedBio != null && cachedBio.isNotEmpty) {
+            _bioController.text = cachedBio;
+          }
+          if (cachedSkills != null && cachedSkills.isNotEmpty) {
+            _skillsController.text = cachedSkills;
+          }
+          if (cachedPhoto != null && cachedPhoto.isNotEmpty) {
+            _photoUrlController.text = cachedPhoto;
+          }
+          if (cachedGit != null && cachedGit.isNotEmpty) {
+            _gitLinkController.text = cachedGit;
+          }
+          if (cachedSpecialty != null && cachedSpecialty.isNotEmpty) {
+            _specialtyController.text = cachedSpecialty;
+          }
+          if (cachedSocial != null && cachedSocial.isNotEmpty) {
+            _socialLinkController.text = cachedSocial;
+          }
+        });
+      }
+    } catch (_) {}
   }
 
   void _addProject({
@@ -148,10 +236,6 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     String skills = '',
     String image = '',
   }) {
-    if (_selectedPlan == 'free' && _projects.isNotEmpty) {
-      _showUpgradeDialog();
-      return;
-    }
     setState(() {
       _projects.add(
         ProjectInput(
@@ -168,59 +252,11 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
   }
 
   void _removeProject(int index) {
-    if (_projects.length <= 1) return; // Must have at least 1 project
+    if (_projects.length <= 1) return;
     setState(() {
       _projects[index].dispose();
       _projects.removeAt(index);
     });
-  }
-
-  void _showUpgradeDialog() {
-    HapticFeedback.heavyImpact();
-    showDialog(
-      context: context,
-      builder: (context) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: AlertDialog(
-          backgroundColor: AppColors.cardDark,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.star_rounded, color: _themeColor, size: 28),
-              const SizedBox(width: 8),
-              const Text('Pro Feature', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-          content: const Text(
-            'The Free Plan allows showcasing only 1 project. Upgrade to the Pro Plan to display unlimited custom projects!',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: AppColors.textMuted),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() => _selectedPlan = 'pro');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _themeColor,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Upgrade to Pro'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -231,6 +267,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     _bioController.dispose();
     _skillsController.dispose();
     _photoUrlController.dispose();
+    _gitLinkController.dispose();
+    _specialtyController.dispose();
+    _socialLinkController.dispose();
     for (var project in _projects) {
       project.dispose();
     }
@@ -241,7 +280,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     if (!_formKey.currentState!.validate()) return;
     HapticFeedback.mediumImpact();
 
-    // Validate all project inputs
+    // Validate projects
     bool projectsValid = true;
     for (var p in _projects) {
       if (p.titleController.text.trim().isEmpty) {
@@ -269,9 +308,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     // Map projects list to JSON array
     final projectsJson = jsonEncode(_projects.map((p) => p.toJson()).toList());
 
-    // Skip integration screen, route directly to launch
+    // Navigate to Plan Selection (Step 3) carrying parameters
     context.go(
-      '${RoutePaths.onboardingLaunch}'
+      '${RoutePaths.onboardingPlan}'
       '?role=$roleName'
       '&full_name=${Uri.encodeComponent(name)}'
       '&title=${Uri.encodeComponent(title)}'
@@ -280,18 +319,21 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       '&avatar_url=${Uri.encodeComponent(photoUrl)}'
       '&accent_color=${Uri.encodeComponent(_selectedColor)}'
       '&layout_template=$_layoutTemplate'
-      '&plan=$_selectedPlan'
       '&projects=${Uri.encodeComponent(projectsJson)}',
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final activeColor = Color(
+      int.parse(_selectedColor.replaceFirst('#', '0xFF')),
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFF050816),
       body: Stack(
         children: [
-          // ─── Aurora background ──────────────────────────────────
+          // Aurora background
           Positioned.fill(
             child: AnimatedBuilder(
               animation: _auroraController,
@@ -306,33 +348,68 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             ),
           ),
 
-          // ─── Form Content ────────────────────────────────────────
+          // Form Content
           Positioned.fill(
             child: SafeArea(
               child: Column(
                 children: [
-                  // Back / Title bar
+                  // Step Indicator & Back Button
                   Padding(
-                    padding: const EdgeInsets.only(
-                      top: AppSpacing.sm,
-                      left: AppSpacing.md,
-                      right: AppSpacing.md,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
                     ),
                     child: Row(
                       children: [
                         IconButton(
                           icon: const Icon(
                             Icons.arrow_back_rounded,
-                            color: AppColors.textPrimary,
+                            color: Colors.white,
                           ),
                           onPressed: () =>
                               context.go(RoutePaths.onboardingRole),
                         ),
-                        const Spacer(),
-                        _buildPlanToggler(),
+                        const Expanded(
+                          child: Text(
+                            'Step 2 of 6',
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(width: 48),
                       ],
                     ),
                   ),
+
+                  // Step Progress Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg,
+                    ),
+                    child: Container(
+                      height: 4,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 2 / 6,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: activeColor,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
 
                   Expanded(
                     child: SingleChildScrollView(
@@ -347,7 +424,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Complete your portfolio',
+                                'Personal Details',
                                 style: Theme.of(context).textTheme.displayMedium
                                     ?.copyWith(
                                       fontSize: 28,
@@ -356,7 +433,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Input your professional details and projects to auto-build your portfolio grid.',
+                                'Customize details based on your specialization as a ${_role.label}.',
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: AppColors.textSecondary,
@@ -366,10 +443,10 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                               const SizedBox(height: AppSpacing.lg),
 
                               // Form Card
-                              _buildGlassFormCard(),
+                              _buildGlassFormCard(activeColor),
                               const SizedBox(height: AppSpacing.xl),
 
-                              // Continue button
+                              // Save & Continue button
                               SizedBox(
                                 width: double.infinity,
                                 height: 56,
@@ -378,13 +455,13 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                                     borderRadius: BorderRadius.circular(16),
                                     gradient: LinearGradient(
                                       colors: [
-                                        _themeColor,
-                                        _themeColor.withValues(alpha: 0.8),
+                                        activeColor,
+                                        activeColor.withValues(alpha: 0.8),
                                       ],
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: _themeColor.withValues(
+                                        color: activeColor.withValues(
                                           alpha: 0.35,
                                         ),
                                         blurRadius: 20,
@@ -403,7 +480,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                                       ),
                                     ),
                                     child: const Text(
-                                      'Auto-Build My Portfolio',
+                                      'Save & Continue',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
@@ -428,55 +505,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     );
   }
 
-  Widget _buildPlanToggler() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [_planTab('Free', 'free'), _planTab('Pro ⭐', 'pro')],
-      ),
-    );
-  }
-
-  Widget _planTab(String label, String value) {
-    final isSelected = _selectedPlan == value;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPlan = value;
-          // If switching to free, trim projects to 1
-          if (_selectedPlan == 'free' && _projects.length > 1) {
-            while (_projects.length > 1) {
-              _projects.removeLast().dispose();
-            }
-          }
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? _themeColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textMuted,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGlassFormCard() {
+  Widget _buildGlassFormCard(Color activeColor) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -496,7 +525,11 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionHeader('PROFILE DETAILS', Icons.person_rounded),
+                _buildSectionHeader(
+                  'PROFILE DETAILS',
+                  Icons.person_rounded,
+                  activeColor,
+                ),
                 const SizedBox(height: 12),
 
                 // Full Name
@@ -506,6 +539,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   decoration: _inputDecoration(
                     'Full Name',
                     Icons.person_outline,
+                    activeColor,
                   ),
                   validator: (v) =>
                       v!.trim().isEmpty ? 'Enter your name' : null,
@@ -519,6 +553,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   decoration: _inputDecoration(
                     'Professional Title',
                     Icons.work_outline,
+                    activeColor,
                   ),
                   validator: (v) =>
                       v!.trim().isEmpty ? 'Enter your title' : null,
@@ -535,6 +570,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                       _inputDecoration(
                         'Short Bio',
                         Icons.chat_bubble_outline,
+                        activeColor,
                       ).copyWith(
                         alignLabelWithHint: true,
                         counterStyle: const TextStyle(
@@ -553,6 +589,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                       _inputDecoration(
                         'Skills (comma separated)',
                         Icons.star_outline_rounded,
+                        activeColor,
                       ).copyWith(
                         hintText: 'e.g. Flutter, Laravel, Design',
                         hintStyle: const TextStyle(
@@ -572,31 +609,23 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   decoration: _inputDecoration(
                     'About Photo URL',
                     Icons.image_outlined,
+                    activeColor,
                   ),
                   validator: (v) =>
                       v!.trim().isEmpty ? 'Enter avatar URL' : null,
                 ),
-                const SizedBox(height: 24),
-
-                _buildSectionHeader('THEME STYLE', Icons.palette_rounded),
                 const SizedBox(height: 12),
 
-                // Dark/Light Theme Choice
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildThemeOption('Dark Theme 🌙', 'minimal_dark'),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildThemeOption(
-                        'Light Theme ☀️',
-                        'minimal_light',
-                      ),
-                    ),
-                  ],
+                // Dynamic Specialization Fields
+                _buildRoleSpecificFields(activeColor),
+                const SizedBox(height: 24),
+
+                _buildSectionHeader(
+                  'THEME COLOR',
+                  Icons.palette_rounded,
+                  activeColor,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Color picker
                 Row(
@@ -648,19 +677,18 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                 // PROJECTS SECTION
                 Row(
                   children: [
-                    _buildSectionHeader('PROJECTS', Icons.folder_open_rounded),
+                    _buildSectionHeader(
+                      'PROJECTS / WORK ENTRIES',
+                      Icons.folder_open_rounded,
+                      activeColor,
+                    ),
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () => _addProject(),
                       icon: const Icon(Icons.add_circle_outline, size: 16),
                       label: Text(
                         'Add Project',
-                        style: TextStyle(
-                          color: _selectedPlan == 'free' && _projects.isNotEmpty
-                              ? AppColors.textMuted
-                              : _themeColor,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: activeColor, fontSize: 12),
                       ),
                     ),
                   ],
@@ -672,7 +700,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
                   final index = entry.key;
                   final project = entry.value;
 
-                  return _buildProjectCard(project, index);
+                  return _buildProjectCard(project, index, activeColor);
                 }),
               ],
             ),
@@ -682,10 +710,106 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     );
   }
 
-  Widget _buildSectionHeader(String label, IconData icon) {
+  Widget _buildRoleSpecificFields(Color activeColor) {
+    if (_role == ProfessionalRole.developer) {
+      return TextFormField(
+        controller: _gitLinkController,
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        decoration: _inputDecoration(
+          'GitHub Profile Link',
+          Icons.code_rounded,
+          activeColor,
+        ),
+      );
+    } else if (_role == ProfessionalRole.photographer) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _specialtyController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'Shooting Specialties (Portrait, Landscape...)',
+              Icons.camera_alt_outlined,
+              activeColor,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _socialLinkController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'Instagram Link',
+              Icons.photo_camera_back_outlined,
+              activeColor,
+            ),
+          ),
+        ],
+      );
+    } else if (_role == ProfessionalRole.writer) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _specialtyController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'Writing Genres (Fiction, Tech...)',
+              Icons.menu_book_outlined,
+              activeColor,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _socialLinkController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'Substack Link',
+              Icons.rss_feed_rounded,
+              activeColor,
+            ),
+          ),
+        ],
+      );
+    } else if (_role == ProfessionalRole.videographer) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _specialtyController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'Shooting Gear list (e.g. Sony A7SIII)',
+              Icons.video_camera_back_outlined,
+              activeColor,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _socialLinkController,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            decoration: _inputDecoration(
+              'YouTube Channel Link',
+              Icons.play_circle_fill_rounded,
+              activeColor,
+            ),
+          ),
+        ],
+      );
+    } else {
+      return TextFormField(
+        controller: _socialLinkController,
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        decoration: _inputDecoration(
+          'LinkedIn Link',
+          Icons.link_rounded,
+          activeColor,
+        ),
+      );
+    }
+  }
+
+  Widget _buildSectionHeader(String label, IconData icon, Color activeColor) {
     return Row(
       children: [
-        Icon(icon, color: _themeColor, size: 18),
+        Icon(icon, color: activeColor, size: 18),
         const SizedBox(width: 6),
         Text(
           label,
@@ -700,39 +824,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     );
   }
 
-  Widget _buildThemeOption(String label, String templateValue) {
-    final isSelected = _layoutTemplate == templateValue;
-    return GestureDetector(
-      onTap: () => setState(() => _layoutTemplate = templateValue),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? _themeColor.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.02),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? _themeColor
-                : Colors.white.withValues(alpha: 0.05),
-            width: isSelected ? 1.5 : 1.0,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProjectCard(ProjectInput project, int index) {
+  Widget _buildProjectCard(ProjectInput project, int index, Color activeColor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
@@ -775,6 +867,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             decoration: _inputDecoration(
               'Project Title',
               Icons.folder_outlined,
+              activeColor,
             ),
             validator: (v) => v!.trim().isEmpty ? 'Enter project title' : null,
           ),
@@ -788,6 +881,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             decoration: _inputDecoration(
               'Description',
               Icons.description_outlined,
+              activeColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -799,6 +893,7 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             decoration: _inputDecoration(
               'Project URL / Link',
               Icons.link_rounded,
+              activeColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -808,8 +903,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             controller: project.skillsController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
             decoration: _inputDecoration(
-              'Skills Used (e.g. Flutter, Vue)',
+              'Tags / Technologies (e.g. Vue)',
               Icons.star_border_rounded,
+              activeColor,
             ),
           ),
           const SizedBox(height: 8),
@@ -819,8 +915,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
             controller: project.imageController,
             style: const TextStyle(color: Colors.white, fontSize: 13),
             decoration: _inputDecoration(
-              'Project Showcase Image URL',
+              'Project Image URL',
               Icons.photo_outlined,
+              activeColor,
             ),
           ),
         ],
@@ -828,14 +925,18 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
     );
   }
 
-  InputDecoration _inputDecoration(String label, IconData icon) {
+  InputDecoration _inputDecoration(
+    String label,
+    IconData icon,
+    Color activeColor,
+  ) {
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(
         color: AppColors.textMuted.withValues(alpha: 0.8),
         fontSize: 12,
       ),
-      prefixIcon: Icon(icon, color: _themeColor, size: 18),
+      prefixIcon: Icon(icon, color: activeColor, size: 18),
       filled: true,
       fillColor: Colors.black.withValues(alpha: 0.15),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -850,13 +951,9 @@ class _DetailsFormScreenState extends State<DetailsFormScreen>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: _themeColor, width: 1.2),
+        borderSide: BorderSide(color: activeColor, width: 1.2),
       ),
     );
-  }
-
-  Color get _themeColor {
-    return Color(int.parse(_selectedColor.replaceFirst('#', '0xFF')));
   }
 }
 

@@ -183,9 +183,12 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
     return switch (_role) {
       ProfessionalRole.developer => 'Select your projects',
       ProfessionalRole.designer => 'Connect your design tools',
+      ProfessionalRole.photographer => 'Link your galleries',
       ProfessionalRole.writer => 'Link your publications',
-      ProfessionalRole.contentCreator => 'Connect your channels',
-      ProfessionalRole.promptEngineer => 'Showcase your prompts',
+      ProfessionalRole.videographer => 'Link your video reels',
+      ProfessionalRole.musician => 'Link your audio streams',
+      ProfessionalRole.marketer => 'Link your marketing metrics',
+      ProfessionalRole.consultant => 'Link your consulting platforms',
     };
   }
 
@@ -195,12 +198,18 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
         'We found these repositories from your GitHub account.\nWhich projects should we feature?',
       ProfessionalRole.designer =>
         'Enter your Figma or Behance profile URL to import your work.',
+      ProfessionalRole.photographer =>
+        'Enter your Instagram or Flickr portfolio link.',
       ProfessionalRole.writer =>
         'Enter your Substack or Medium URL so we can auto-import articles.',
-      ProfessionalRole.contentCreator =>
-        'Enter your YouTube channel URL to embed your latest videos.',
-      ProfessionalRole.promptEngineer =>
-        'Add a link to your prompt collections or GitHub Gists.',
+      ProfessionalRole.videographer =>
+        'Enter your YouTube channel or Vimeo URL to embed videos.',
+      ProfessionalRole.musician =>
+        'Enter your SoundCloud or Spotify artist URL.',
+      ProfessionalRole.marketer =>
+        'Enter your LinkedIn or professional agency profile.',
+      ProfessionalRole.consultant =>
+        'Enter your Calendly or consulting website link.',
     };
   }
 
@@ -326,9 +335,10 @@ class _IntegrationScreenState extends State<IntegrationScreen> {
   Widget _buildUrlInput() {
     final placeholder = switch (_role) {
       ProfessionalRole.designer => 'https://figma.com/@yourname',
+      ProfessionalRole.photographer => 'https://instagram.com/yourname',
       ProfessionalRole.writer => 'https://yourname.substack.com',
-      ProfessionalRole.contentCreator => 'https://youtube.com/@yourname',
-      ProfessionalRole.promptEngineer => 'https://gist.github.com/yourname',
+      ProfessionalRole.videographer => 'https://youtube.com/@yourname',
+      ProfessionalRole.musician => 'https://soundcloud.com/yourname',
       _ => 'https://...',
     };
 

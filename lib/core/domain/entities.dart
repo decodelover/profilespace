@@ -70,25 +70,36 @@ enum ProfessionalRole {
     emoji: '💻',
     subtitle: 'Sync repos and tech stack',
   ),
-  designer(
-    label: 'Designer',
-    emoji: '🎨',
-    subtitle: 'Showcase Figma and images',
+  designer(label: 'Designer', emoji: '🎨', subtitle: 'Showcase design works'),
+  photographer(
+    label: 'Photographer',
+    emoji: '📷',
+    subtitle: 'Gallery images & portfolios',
   ),
   writer(
     label: 'Writer',
     emoji: '✍️',
     subtitle: 'Aggregate newsletters & articles',
   ),
-  contentCreator(
-    label: 'Content Creator',
+  videographer(
+    label: 'Videographer',
     emoji: '🎥',
-    subtitle: 'Embed YouTube, show stats',
+    subtitle: 'Showcase video project reels',
   ),
-  promptEngineer(
-    label: 'AI Prompt Engineer',
-    emoji: '🤖',
-    subtitle: 'Highlight prompt playbooks',
+  musician(
+    label: 'Musician',
+    emoji: '🎵',
+    subtitle: 'Share tracks and performances',
+  ),
+  marketer(
+    label: 'Marketer',
+    emoji: '📈',
+    subtitle: 'Highlight growth and analytics',
+  ),
+  consultant(
+    label: 'Consultant',
+    emoji: '💼',
+    subtitle: 'Showcase consulting services',
   );
 
   final String label;
