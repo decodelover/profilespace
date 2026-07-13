@@ -40,13 +40,7 @@ jobs:
           touch database/database.sqlite
 
       - name: Run Migrations
-        env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
         run: php artisan migrate --force
 
       - name: Execute Test Suite
-        env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
         run: php artisan test
